@@ -152,15 +152,23 @@ input[type=range].fc{padding:4px 0;border:none;background:transparent;cursor:poi
 .sn{font-size:22px;font-weight:700;line-height:1}
 .sl2{font-size:9px;color:var(--text2);letter-spacing:.5px}
 /* PATIENT ROW */
-.pr{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r2);border:1px solid transparent;cursor:pointer;background:var(--card);margin-bottom:5px;transition:all .15s}
+.pr{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r2);border:1px solid transparent;background:var(--card);margin-bottom:4px;transition:all .15s}
 .pr:hover{border-color:var(--border2);background:var(--card2)}
 .pav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
-.pi{flex:1;min-width:0}
-.pn{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pm{font-size:11.5px;color:var(--text2)}
+.pi{flex:1;min-width:0;cursor:pointer}
+.pn{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:5px;margin-top:1px}
+.ddot{display:inline-block;width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .ptg{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
 .pac{display:flex;gap:5px;opacity:0;transition:opacity .15s;flex-shrink:0}
 .pr:hover .pac,.pac.vis{opacity:1}
+.bic.on{background:var(--bg4);color:var(--pk);border-color:var(--pk)}
+.seg-inline{margin:-2px 0 8px;padding:8px 10px 8px 14px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--pu);border-radius:0 var(--r2) var(--r2) 0}
+.seg-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+.seg-row:last-child{border-bottom:none}
+.seg-date{font-size:11px;font-weight:600;color:var(--pu);flex-shrink:0;width:110px}
+.seg-sum{flex:1;font-size:11.5px;color:var(--text2);min-width:0}
+.seg-act{display:flex;gap:4px;flex-shrink:0}
 @media(max-width:768px){.pac{opacity:1}}
 /* TIMELINE */
 .tl{position:relative;padding-left:20px}
@@ -289,27 +297,30 @@ button,a{touch-action:manipulation}
 <body>
 <div id="mov" class="mov" onclick="cls()"></div>
 <aside class="sidebar" id="sb">
-  <div class="slogo"><div class="lico">🌸</div><div class="ltxt"><strong>GineApp Pro</strong><span>ESHRE · SEGO · AST 2025</span></div></div>
+  <div class="slogo"><div class="lico">🌸</div><div class="ltxt"><strong>GineApp Pro</strong><span>ESHRE · SEGO · Asturias 2025</span></div></div>
   <nav>
     <div class="nlbl">Principal</div>
     <button class="nb on" onclick="go('dashboard',this)"><span class="ico">📊</span>Dashboard</button>
     <button class="nb" onclick="go('pacientes',this)"><span class="ico">👩</span>Pacientes<span class="bdg" id="bdgP">0</span></button>
     <button class="nb" onclick="go('revisiones',this)"><span class="ico">📅</span>Revisiones<span class="bdg" id="bdgRev" style="display:none;background:var(--rd)">0</span></button>
     <button class="nb" onclick="go('nueva',this)"><span class="ico">➕</span>Nueva Paciente</button>
-    <div class="nlbl">Evaluación</div>
+    <button class="nb" onclick="go('informes',this)"><span class="ico">📄</span>Informes</button>
+    <div class="nlbl">Herramientas</div>
+    <button class="nb" onclick="go('scores',this)"><span class="ico">📏</span>Escalas &amp; Scores</button>
+    <div class="nlbl">Protocolos</div>
     <button class="nb" onclick="go('algoritmos',this)"><span class="ico">🔬</span>Algoritmos Dx</button>
     <button class="nb" onclick="go('tratamiento',this)"><span class="ico">💊</span>Tratamiento</button>
     <button class="nb" onclick="go('fertilidad',this)"><span class="ico">🌱</span>Fertilidad</button>
-    <div class="nlbl">Herramientas</div>
-    <button class="nb" onclick="go('scores',this)"><span class="ico">📏</span>Escalas &amp; Scores</button>
     <button class="nb" onclick="go('guias',this)"><span class="ico">📋</span>Guías 2025</button>
-    <button class="nb" onclick="go('informes',this)"><span class="ico">📄</span>Informes</button>
   </nav>
   <div class="sfoot">
     <a href="ayuda.html" target="_blank" style="display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:var(--r2);color:var(--text2);text-decoration:none;font-size:12px;font-weight:500;transition:all .15s;margin-bottom:8px;border:1px solid var(--border2)" onmouseover="this.style.color='var(--pk)';this.style.borderColor='var(--pk)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">
       <span style="font-size:14px">❓</span>Ayuda &amp; Manual
     </a>
-    <div>ESHRE 2022 · SEGO 2025 · AST 2025</div><div class="c3">v1.0 — (C) J.M.F. Carreira 2026</div>
+    <button onclick="loadDemo()" style="display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:var(--r2);color:var(--text2);background:none;font-size:12px;font-weight:500;transition:all .15s;margin-bottom:8px;border:1px solid var(--border2);width:100%;cursor:pointer;font-family:inherit" onmouseover="this.style.color='var(--gr)';this.style.borderColor='var(--gr)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">
+      <span style="font-size:14px">🧪</span>Cargar demo
+    </button>
+    <div>ESHRE 2022 · SEGO 2025 · Asturias 2025</div><div class="c3">v2.3 — J.M.F. Carreira</div>
   </div>
 </aside>
 <main class="main">
@@ -356,17 +367,6 @@ button,a{touch-action:manipulation}
     </div>
     <div id="dashAlerts"></div>
   </div>
-  <div class="g3 mt4">
-    <button class="card" style="border:1px dashed var(--border2);text-align:center;cursor:pointer;padding:18px 12px;transition:border-color .15s;background:var(--card)" onclick="go('nueva',null)" onmouseover="this.style.borderColor='var(--pk)'" onmouseout="this.style.borderColor='var(--border2)'">
-      <div style="font-size:24px;margin-bottom:6px">➕</div><div class="f6 sm">Nueva paciente</div><div class="xs c2 mt2u">Registrar caso clínico</div>
-    </button>
-    <button class="card" style="border:1px dashed var(--border2);text-align:center;cursor:pointer;padding:18px 12px;transition:border-color .15s;background:var(--card)" onclick="go('algoritmos',null)" onmouseover="this.style.borderColor='var(--pu)'" onmouseout="this.style.borderColor='var(--border2)'">
-      <div style="font-size:24px;margin-bottom:6px">🔬</div><div class="f6 sm">Algoritmos Dx</div><div class="xs c2 mt2u">ESHRE 2022 · SEGO 2025</div>
-    </button>
-    <button class="card" style="border:1px dashed var(--border2);text-align:center;cursor:pointer;padding:18px 12px;transition:border-color .15s;background:var(--card)" onclick="loadDemo()" onmouseover="this.style.borderColor='var(--gr)'" onmouseout="this.style.borderColor='var(--border2)'">
-      <div style="font-size:24px;margin-bottom:6px">🧪</div><div class="f6 sm">Cargar demo</div><div class="xs c2 mt2u">5 pacientes de ejemplo</div>
-    </button>
-  </div>
 </div>
 <!-- PACIENTES -->
 <div id="s-pacientes" class="sec">
@@ -378,6 +378,14 @@ button,a{touch-action:manipulation}
       </select>
       <select class="fc" style="width:auto;padding:6px 9px;font-size:12px" id="fltG" onchange="rPL()">
         <option value="">Todas</option><option value="si">Desean gestación</option><option value="no">No gestación</option>
+      </select>
+      <select class="fc" style="width:auto;padding:6px 9px;font-size:12px" id="fltSort" onchange="rPL()" title="Ordenar por">
+        <option value="fecha_desc">↓ Más recientes</option>
+        <option value="fecha_asc">↑ Más antiguas</option>
+        <option value="nombre_asc">A→Z Nombre</option>
+        <option value="nombre_desc">Z→A Nombre</option>
+        <option value="dx_asc">Patología</option>
+        <option value="nhc_asc">NHC / código</option>
       </select>
       <button class="btn bs bsm" id="fltAdvToggle" onclick="toggleAdvFilters()">🔍 Filtros avanzados</button>
     </div>
@@ -726,10 +734,14 @@ button,a{touch-action:manipulation}
         <div class="chips" id="cTM"><div class="chip" onclick="ck(this)">ACO combinados</div><div class="chip" onclick="ck(this)">Progestágenos (oral)</div><div class="chip" onclick="ck(this)">DIU-LNG</div><div class="chip" onclick="ck(this)">Implante etonogestrel</div><div class="chip" onclick="ck(this)">Agonistas GnRH</div><div class="chip" onclick="ck(this)">Relugolix (antagonista)</div><div class="chip" onclick="ck(this)">Linzagolix (antagonista)</div><div class="chip" onclick="ck(this)">Inhibidores aromatasa</div><div class="chip" onclick="ck(this)">AINEs</div><div class="chip" onclick="ck(this)">Ácido tranexámico</div><div class="chip" onclick="ck(this)">Dienogest</div><div class="chip" onclick="ck(this)">Vitamina D</div></div>
       </div>
       <div class="fr2">
-        <div class="fg"><label class="fl">Motivo de cambio de tratamiento (si aplica)</label><select class="fc" id="fMotivoTx"><option value="">—</option><option>Falta de eficacia</option><option>Efectos secundarios</option><option>Deseo gestacional</option><option>Cirugía programada</option><option>Preferencia de la paciente</option><option>Contraindicación médica</option><option>Otro</option></select></div>
+        <div class="fg"><label class="fl">Motivo de cambio de tratamiento (si aplica)</label><select class="fc" id="fMotivoTx" onchange="checkEscaladaLive()"><option value="">—</option><option>Falta de eficacia</option><option>Efectos secundarios</option><option>Deseo gestacional</option><option>Cirugía programada</option><option>Preferencia de la paciente</option><option>Contraindicación médica</option><option>Otro</option></select></div>
         <div class="fg"><label class="fl">Detalle del motivo</label><input class="fc" id="fMotivoTxTxt" placeholder="Ej: EVA persistente 8/10 tras 3 meses de ACO"></div>
       </div>
       <div class="fh" style="margin:-6px 0 13px">Se registrará en el historial solo si esta edición implica un cambio en el tratamiento médico.</div>
+      <div id="escAlertBox" style="display:none" class="box bw mb3">
+        <div class="bt" id="escAlertTitle">⚠️ Posible salto de línea terapéutica</div>
+        <div id="escAlertTxt" class="sm"></div>
+      </div>
       <div class="fg"><label class="fl">Intervenciones quirúrgicas</label>
         <div class="chips" id="cTQ"><div class="chip" onclick="ck(this)">Laparoscopía diagnóstica</div><div class="chip" onclick="ck(this)">Escisión endometriosis</div><div class="chip" onclick="ck(this)">Ablación endometriosis</div><div class="chip" onclick="ck(this)">Quistectomía ovárica</div><div class="chip" onclick="ck(this)">Ooforectomía</div><div class="chip" onclick="ck(this)">Shaving rectal</div><div class="chip" onclick="ck(this)">Resección discoide</div><div class="chip" onclick="ck(this)">Miomectomía histeroscópica</div><div class="chip" onclick="ck(this)">Miomectomía laparoscópica</div><div class="chip" onclick="ck(this)">Miomectomía laparotómica</div><div class="chip" onclick="ck(this)">HIFU / Radiofrecuencia</div><div class="chip" onclick="ck(this)">Embolización (EAU)</div><div class="chip" onclick="ck(this)">Histerectomía</div><div class="chip" onclick="ck(this)">Resección intestinal</div></div>
       </div>
@@ -1087,29 +1099,6 @@ button,a{touch-action:manipulation}
       <div class="box br"><div class="bt">🚫 EAU contraindicada si desea gestación</div>Riesgo de amenorrea, complicaciones obstétricas y reducción de reserva ovárica.</div>
     </div>
   </div>
-  <!-- EFI CALC -->
-  <div class="card">
-    <div class="ct mb3">📏 Calculadora EFI Interactiva</div>
-    <div class="g2">
-      <div>
-        <div class="fr2">
-          <div class="fg"><label class="fl">Edad</label><select class="fc" id="eAge" onchange="cEFI()"><option value="2">&lt;35 años</option><option value="1">35–39 años</option><option value="0">≥40 años</option></select></div>
-          <div class="fg"><label class="fl">Duración infertilidad</label><select class="fc" id="eDur" onchange="cEFI()"><option value="2">&lt;3 años</option><option value="1">≥3 años</option></select></div>
-        </div>
-        <div class="fg"><label class="fl">Embarazo previo</label><select class="fc" id="ePreg" onchange="cEFI()"><option value="1">Sí</option><option value="0">No</option></select></div>
-        <div class="fg"><label class="fl">Función mínima tuba/ovario</label><select class="fc" id="eFunc" onchange="cEFI()"><option value="4">Normal (4)</option><option value="3">Leve (3)</option><option value="2">Moderada (2)</option><option value="1">Severa (1)</option><option value="0">Ausente (0)</option></select></div>
-        <div class="fr2">
-          <div class="fg"><label class="fl">Estadio rASRM</label><select class="fc" id="eStg" onchange="cEFI()"><option value="1">Estadio I–II</option><option value="0">Estadio III–IV</option></select></div>
-          <div class="fg"><label class="fl">Puntos totales rASRM</label><select class="fc" id="eTot" onchange="cEFI()"><option value="1">&lt;16 pts</option><option value="0">≥16 pts</option></select></div>
-        </div>
-      </div>
-      <div class="flex fc2 aic jcc g3u">
-        <div class="scr" id="efiR" style="border-color:var(--gr)"><div class="sn" id="efiN" style="color:var(--gr)">—</div><div class="sl2">EFI</div></div>
-        <div id="efiT" class="sm c2 tc" style="max-width:180px">Complete los campos para calcular</div>
-        <div id="efiB" class="box wf tc" style="display:none"></div>
-      </div>
-    </div>
-  </div>
 </div>
 <!-- SCORES -->
 <div id="s-scores" class="sec">
@@ -1137,8 +1126,34 @@ button,a{touch-action:manipulation}
       </div>
     </div>
   </div>
+  <!-- EFI CALC (trasladada desde Fertilidad — es interactiva) -->
+  <div class="card mt4" id="efiCard">
+    <div class="chd">
+      <div><div class="ct">📏 Calculadora EFI Interactiva</div><div class="cs">Endometriosis Fertility Index — predice embarazo no-TRA</div></div>
+      <span class="tag tpu">ESHRE 2022</span>
+    </div>
+    <div class="g2">
+      <div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Edad</label><select class="fc" id="eAge" onchange="cEFI()"><option value="2">&lt;35 años</option><option value="1">35–39 años</option><option value="0">≥40 años</option></select></div>
+          <div class="fg"><label class="fl">Duración infertilidad</label><select class="fc" id="eDur" onchange="cEFI()"><option value="2">&lt;3 años</option><option value="1">≥3 años</option></select></div>
+        </div>
+        <div class="fg"><label class="fl">Embarazo previo</label><select class="fc" id="ePreg" onchange="cEFI()"><option value="1">Sí</option><option value="0">No</option></select></div>
+        <div class="fg"><label class="fl">Función mínima tuba/ovario</label><select class="fc" id="eFunc" onchange="cEFI()"><option value="4">Normal (4)</option><option value="3">Leve (3)</option><option value="2">Moderada (2)</option><option value="1">Severa (1)</option><option value="0">Ausente (0)</option></select></div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Estadio rASRM</label><select class="fc" id="eStg" onchange="cEFI()"><option value="1">Estadio I–II</option><option value="0">Estadio III–IV</option></select></div>
+          <div class="fg"><label class="fl">Puntos totales rASRM</label><select class="fc" id="eTot" onchange="cEFI()"><option value="1">&lt;16 pts</option><option value="0">≥16 pts</option></select></div>
+        </div>
+      </div>
+      <div class="flex fc2 aic jcc g3u">
+        <div class="scr" id="efiR" style="border-color:var(--gr)"><div class="sn" id="efiN" style="color:var(--gr)">—</div><div class="sl2">EFI</div></div>
+        <div id="efiT" class="sm c2 tc" style="max-width:180px">Complete los campos para calcular</div>
+        <div id="efiB" class="box wf tc" style="display:none"></div>
+      </div>
+    </div>
+  </div>
   <!-- STEPW CALC -->
-  <div class="card mt4">
+  <div class="card mt4" id="stepwCard">
     <div class="chd">
       <div><div class="ct">📐 Calculadora STEPW — Miomectomía Histeroscópica</div><div class="cs">Predice complejidad quirúrgica y necesidad de 1 vs 2 tiempos</div></div>
       <span class="tag to">SEGO 2025</span>
@@ -1378,6 +1393,10 @@ button,a{touch-action:manipulation}
             <option value="fert">Con deseo gestacional</option>
           </select>
         </div>
+        <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;margin-bottom:12px">
+          <input type="checkbox" id="expAnonJSON" style="width:15px;height:15px;flex-shrink:0">
+          <span class="sm">🕶️ <strong>Anonimizar</strong> — sustituye nombre/NHC/teléfono por un código. Descarga además una clave de reasociación por separado.</span>
+        </label>
         <div id="expPreview" class="mb3" style="display:none">
           <div class="xs c2 mb2">Vista previa:</div>
           <div id="expPreviewTxt" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;font-size:11px;font-family:monospace;max-height:120px;overflow-y:auto;color:var(--text2);word-break:break-all"></div>
@@ -1418,6 +1437,10 @@ button,a{touch-action:manipulation}
             <option value="	">Tabulador</option>
           </select>
         </div>
+        <label style="display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;margin-bottom:12px">
+          <input type="checkbox" id="expAnonCSV" style="width:15px;height:15px;flex-shrink:0">
+          <span class="sm">🕶️ <strong>Anonimizar</strong> — sustituye nombre/NHC/teléfono por un código. Descarga además una clave de reasociación por separado.</span>
+        </label>
         <div class="flex g2u wrap">
           <button class="btn bp" onclick="expCSV()">⬇️ Descargar CSV</button>
           <button class="btn bs" onclick="expXLSX()">⬇️ Descargar Excel</button>
@@ -1445,7 +1468,7 @@ button,a{touch-action:manipulation}
       </div>
       <div class="box bw mb3">
         <div class="bt">⚠️ Importante antes de importar</div>
-        La importación puede <strong>reemplazar o fusionar</strong> los datos existentes. Se recomienda exportar una copia de seguridad primero.
+        La importación puede <strong>reemplazar o fusionar</strong> los datos existentes. Se recomienda exportar una copia de seguridad primero. Los datasets <strong>anonimizados</strong> se detectan automáticamente: reciben identificadores internos nuevos y no colisionan con tus pacientes ya registradas.
       </div>
       <div class="fg">
         <label class="fl">Seleccionar archivo JSON</label>
@@ -1458,7 +1481,7 @@ button,a{touch-action:manipulation}
           <select class="fc" id="impMode">
             <option value="merge">Fusionar (mantener existentes + añadir nuevas)</option>
             <option value="replace">Reemplazar todo (borra datos actuales)</option>
-            <option value="new">Solo añadir pacientes nuevas (por NHC)</option>
+            <option value="new">Solo añadir pacientes nuevas (por NHC o código)</option>
           </select>
         </div>
       </div>
@@ -1908,6 +1931,7 @@ function udF(){
   const v=document.getElementById('fDx').value;
   document.getElementById('endoF').style.display=(v==='endometriosis'||v==='ambas')?'block':'none';
   document.getElementById('miomaF').style.display=(v==='miomas'||v==='ambas')?'block':'none';
+  if(typeof checkEscaladaLive==='function')checkEscaladaLive();
 }
 
 // ═══════════════════════════════════════════════
@@ -1921,6 +1945,7 @@ function clr(){
   ['fEC','fAnt','fDG','fDx','fAS','fMD','fAd','fFG','fNM','fDC','fET','fRT','fDur','fDem','fFM','fPT','fTRA','fRec','fCirIntest','fCirUrin','fRTQx','fEmb','fAfectSex','fAfectFam','fMotivoTx'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
   ['cAF','cSx','cLE','cSM','cTM','cTQ','cMC','cPL'].forEach(id=>document.querySelectorAll('#'+id+' .chip').forEach(c=>c.classList.remove('on')));
   const mcTxt=document.getElementById('fMCTxt');if(mcTxt)mcTxt.value='';hideAlert('mcAlertBox');
+  hideAlert('escAlertBox');
   document.getElementById('fRecLocWrap').style.display='none';
   document.getElementById('fCirIntestTxtWrap').style.display='none';
   document.getElementById('fCirUrinTxtWrap').style.display='none';
@@ -2081,7 +2106,7 @@ function fillF(p){
   s('fCirUrinTxt',p.cirUrinTxt);
   sC('cMC',p.medConc||[]);
   s('fMCTxt',p.medConcTxt||'');
-  setTimeout(()=>checkMedInteractions(gC('cTM'),gC('cMC')),0);
+  setTimeout(()=>{checkMedInteractions(gC('cTM'),gC('cMC'));checkEscaladaLive();},0);
   s('fRT',p.respTx);s('fPR',p.proxRev);s('fPTx',p.planTx);
   s('fRTQx',p.respPostQx);s('fEmb',p.embarazoLogrado);
   s('fTI',p.tiempoInf);s('fEFI',p.efi);s('fFM',p.factorMasc);s('fPT',p.permTub);s('fTRA',p.tra||'ninguna');
@@ -2339,6 +2364,38 @@ function hideAlert(id) {
   if (el) el.style.display = 'none';
 }
 
+// Comprueba en vivo, dentro del formulario, si el tratamiento seleccionado implica
+// un salto de línea terapéutica (esquema B) — mismo patrón que checkMedInteractions()
+function checkEscaladaLive(){
+  const box=document.getElementById('escAlertBox');
+  const txt=document.getElementById('escAlertTxt');
+  if(!box||!txt)return;
+
+  const dxEl=document.getElementById('fDx');
+  const dx=dxEl?dxEl.value:'';
+  const txMed=gC('cTM');
+  const motivoEl=document.getElementById('fMotivoTx');
+  const motivoCambioTx=motivoEl?motivoEl.value:'';
+  const historial=eId?((DB.find(p=>p.id===eId)||{}).historial||[]):[];
+
+  const esc=checkEscalada({dx,txMed,motivoCambioTx,historial});
+  if(!esc){hideAlert('escAlertBox');return;}
+
+  const lineaTxt={1:'1ª línea (ACO/progestágenos/DIU-LNG)',2:'2ª línea (agonistas/antagonistas GnRH)',3:'refractario (inhibidores aromatasa)'};
+  const faltantesTxt=esc.faltantes.map(n=>lineaTxt[n]).join(' y ');
+
+  if(esc.motivoDocumentado){
+    box.className='box bo mb3';
+    document.getElementById('escAlertTitle').textContent='✅ Salto de línea documentado';
+    txt.innerHTML=`El tratamiento actual corresponde a ${lineaTxt[esc.lineaActual]} sin constancia de ${faltantesTxt} en el historial, pero el motivo registrado ("${motivoCambioTx}") lo justifica.`;
+  } else {
+    box.className='box bw mb3';
+    document.getElementById('escAlertTitle').textContent='⚠️ Posible salto de línea terapéutica';
+    txt.innerHTML=`El tratamiento seleccionado corresponde a ${lineaTxt[esc.lineaActual]} sin constancia de haber pasado por ${faltantesTxt} en el historial. Puede tratarse de tratamiento iniciado en otro centro — si no, indica el motivo arriba.`;
+  }
+  box.style.display='block';
+}
+
 // ═══════════════════════════════════════════════
 // PATIENT LIST
 // ═══════════════════════════════════════════════
@@ -2400,6 +2457,28 @@ function applyFiltersToDOM(f){
   rPL();
 }
 
+function sortPL(list,mode){
+  const byNombre=(a,b)=>a.nombre.localeCompare(b.nombre,'es');
+  const byFecha=(a,b)=>new Date(b.updatedAt||b.createdAt)-new Date(a.updatedAt||a.createdAt);
+  const dxOrden={endometriosis:0,ambas:1,miomas:2,sospecha:3};
+  switch(mode){
+    case 'nombre_asc': return[...list].sort(byNombre);
+    case 'nombre_desc': return[...list].sort((a,b)=>byNombre(b,a));
+    case 'dx_asc': return[...list].sort((a,b)=>(dxOrden[a.dx]??9)-(dxOrden[b.dx]??9)||byNombre(a,b));
+    case 'nhc_asc': return[...list].sort((a,b)=>(a.nhc||a.anonCode||'').localeCompare(b.nhc||b.anonCode||'','es',{numeric:true})||byNombre(a,b));
+    case 'fecha_asc': return[...list].sort((a,b)=>byFecha(b,a));
+    case 'fecha_desc':
+    default: return[...list].sort(byFecha);
+  }
+}
+// Píldora compacta de patología para el listado (punto de color + texto corto)
+const dxDot=dx=>({
+  endometriosis:'<span class="ddot" style="background:var(--pk)"></span>Endo',
+  miomas:'<span class="ddot" style="background:var(--or)"></span>Miomas',
+  ambas:'<span class="ddot" style="background:var(--pu)"></span>Endo+Mio',
+  sospecha:'<span class="ddot" style="background:var(--text3)"></span>Sospecha'
+}[dx]||'<span class="ddot" style="background:var(--border2)"></span>Sin dx');
+
 function rPL(){
   const cont=document.getElementById('pList');
   const f=getActiveFilters();
@@ -2434,23 +2513,233 @@ function rPL(){
 
     return ms&&md&&mg&&me&&meva&&mrev&&masrm&&mfigo;
   });
+  const sortMode=document.getElementById('fltSort')?document.getElementById('fltSort').value:'fecha_desc';
+  list=sortPL(list,sortMode);
   document.getElementById('cntP').textContent=list.length;
   if(!list.length){cont.innerHTML=`<div class="empty"><div class="ei">👩‍⚕️</div><h3>Sin resultados</h3><div>No hay pacientes que coincidan</div><button class="btn bp mt3" onclick="go('nueva',null)">+ Registrar paciente</button></div>`;return;}
-  cont.innerHTML=list.map(p=>`
-    <div class="pr" data-pid="${p.id}" onclick="vPt('${p.id}')">
-      <div class="pav" style="background:${avC(p.nombre)}1a;color:${avC(p.nombre)};border:1.5px solid ${avC(p.nombre)}33">${ini(p.nombre)}</div>
-      <div class="pi">
-        <div class="pn">${p.nombre}</div>
-        <div class="pm">${p.nhc?'NHC:'+p.nhc+' · ':''}${age(p.fechaNac)} años${p.paridad?' · '+p.paridad:''}</div>
-        <div class="ptg">${dxT(p.dx)}${p.deseoGestacion==='si'||p.deseoGestacion==='futuro'?'<span class="tag tg">🌱</span>':''}</div>
+  cont.innerHTML=list.map(p=>{
+    const nSeg=(p.historial||[]).length;
+    return`
+    <div class="pr pr-c" data-pid="${p.id}">
+      <div class="pi" onclick="vPt('${p.id}')">
+        <div class="pn">${p.nombre}${p.nhc?` <span class="c3 xs f5">· ${p.nhc}</span>`:''}</div>
+        <div class="pm">${dxDot(p.dx)}<span class="c3">·</span>${age(p.fechaNac)}a${p.paridad?' · '+p.paridad:''}${(p.deseoGestacion==='si'||p.deseoGestacion==='futuro')?' · 🌱':''}</div>
       </div>
+      <button class="btn bg bsm bic" onclick="event.stopPropagation();toggleSegInline('${p.id}',this)" title="Ver seguimientos">📈<span class="bdg" id="segBadge-${p.id}" style="margin-left:2px;background:${nSeg?'var(--pu)':'var(--border2)'};color:${nSeg?'#fff':'var(--text3)'}">${nSeg}</span></button>
       <div class="pac vis">
         <button class="btn bs bsm bic" onclick="event.stopPropagation();qRid('${p.id}')" title="Informe">📄</button>
         <button class="btn bs bsm bic" onclick="event.stopPropagation();eById('${p.id}')" title="Editar">✏️</button>
       </div>
-    </div>`).join('');
+    </div>
+    <div class="seg-inline" id="seg-${p.id}" style="display:none"></div>`;
+  }).join('');
 }
 function eById(id){const p=DB.find(x=>x.id===id);if(!p)return;fillF(p);go('nueva',document.querySelectorAll('.nb')[2]);}
+
+// ═══════════════════════════════════════════════
+// SEGUIMIENTOS INLINE — desplegable en la tabla de Pacientes
+// Permite crear/editar/eliminar cualquier entrada del historial en cualquier
+// momento, con fecha libre (no depende de la fecha actual del sistema).
+// ═══════════════════════════════════════════════
+function toggleSegInline(pid,btn){
+  const box=document.getElementById('seg-'+pid);
+  if(!box)return;
+  const open=box.style.display!=='none';
+  // Cerrar cualquier otro panel abierto (uno a la vez)
+  document.querySelectorAll('.seg-inline').forEach(el=>{el.style.display='none';if(el.id!=='seg-'+pid)el.innerHTML='';});
+  document.querySelectorAll('#pList .bic.on').forEach(b=>b.classList.remove('on'));
+  if(open){box.innerHTML='';return;}
+  const p=DB.find(x=>x.id===pid);
+  if(!p)return;
+  box.innerHTML=renderSegInline(p);
+  box.style.display='block';
+  if(btn)btn.classList.add('on');
+}
+
+function renderSegInline(p){
+  const hist=[...(p.historial||[])].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const rows=hist.length?hist.map(s=>{
+    const d=new Date(s.fecha);
+    const dStr=d.toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
+    const resumen=[
+      s.evaD?'EVA dis '+s.evaD:'',
+      s.evaP?'EVA pel '+s.evaP:'',
+      s.hgb?'Hgb '+s.hgb:'',
+      (s.txMed&&s.txMed.length)?s.txMed.slice(0,2).join(', ')+(s.txMed.length>2?'…':''):''
+    ].filter(Boolean).join(' · ');
+    return`<div class="seg-row">
+      <div class="seg-date">${dStr}${s.manual?' <span class="xs c3" title="Registrado manualmente">✏️</span>':''}</div>
+      <div class="seg-sum">${resumen||'<span class="c3">Sin datos clínicos</span>'}</div>
+      <div class="seg-act">
+        <button class="btn bg bsm bic" onclick="openSegModal('${p.id}','${s.id}')" title="Ver / editar">✏️</button>
+        <button class="btn bg bsm bic" onclick="deleteSegEntry('${p.id}','${s.id}')" title="Eliminar" style="color:var(--rd)">🗑</button>
+      </div>
+    </div>`;
+  }).join(''):`<div class="xs c3" style="padding:8px 0">Sin seguimientos registrados todavía.</div>`;
+
+  return`<div class="seg-inline-inner">
+    ${rows}
+    <button class="btn bp bsm mt2u" onclick="openSegModal('${p.id}',null)">+ Nuevo seguimiento</button>
+  </div>`;
+}
+
+function openSegModal(pid,segId){
+  const p=DB.find(x=>x.id===pid);
+  if(!p)return;
+  let existing=document.getElementById('segModal');
+  if(existing)existing.remove();
+
+  const isEdit=!!segId;
+  const s=isEdit?(p.historial||[]).find(x=>x.id===segId):null;
+  const today=new Date().toISOString().slice(0,10);
+  const fechaVal=s?new Date(s.fecha).toISOString().slice(0,10):today;
+
+  const chipsTxMed=['ACO combinados','Progestágenos (oral)','DIU-LNG','Implante etonogestrel','Agonistas GnRH','Relugolix (antagonista)','Linzagolix (antagonista)','Inhibidores aromatasa','AINEs','Ácido tranexámico','Dienogest','Vitamina D'];
+  const chipsTxQx=['Laparoscopía diagnóstica','Escisión endometriosis','Ablación endometriosis','Quistectomía ovárica','Ooforectomía','Shaving rectal','Resección discoide','Miomectomía histeroscópica','Miomectomía laparoscópica','Miomectomía laparotómica','HIFU / Radiofrecuencia','Embolización (EAU)','Histerectomía','Resección intestinal'];
+
+  const m=document.createElement('div');
+  m.id='segModal';
+  m.style.cssText='position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:12px';
+  m.innerHTML=`
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);max-width:640px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow)">
+      <div style="padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:5">
+        <div style="font-weight:700;font-size:14px;color:var(--pk)">📈 ${isEdit?'Editar':'Nuevo'} seguimiento — ${p.nombre}</div>
+        <button class="btn bic bg" onclick="document.getElementById('segModal').remove()">✕</button>
+      </div>
+      <div style="padding:16px 18px">
+        <div class="box bi2 mb3" style="font-size:11.5px">Este seguimiento se guarda con la fecha que indiques, sin depender de la fecha actual del sistema — útil para visitas retroactivas o correcciones históricas.</div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Fecha del seguimiento *</label><input type="date" class="fc" id="segFecha" value="${fechaVal}"></div>
+          <div class="fg"><label class="fl">Próxima revisión</label><input type="date" class="fc" id="segProxRev" value="${s&&s.proxRev?s.proxRev:''}"></div>
+        </div>
+        <div class="fr3">
+          <div class="fg"><label class="fl">EVA dismenorrea</label><input type="number" min="0" max="10" class="fc" id="segEvaD" value="${s?(s.evaD||''):''}"></div>
+          <div class="fg"><label class="fl">EVA dolor pélvico</label><input type="number" min="0" max="10" class="fc" id="segEvaP" value="${s?(s.evaP||''):''}"></div>
+          <div class="fg"><label class="fl">EFI</label><input type="number" min="0" max="10" class="fc" id="segEfi" value="${s?(s.efi||''):''}"></div>
+        </div>
+        <div class="fr3">
+          <div class="fg"><label class="fl">Hemoglobina (g/dL)</label><input type="number" step="0.1" class="fc" id="segHgb" value="${s?(s.hgb||''):''}"></div>
+          <div class="fg"><label class="fl">AMH (ng/mL)</label><input type="number" step="0.1" class="fc" id="segAmh" value="${s?(s.amh||''):''}"></div>
+          <div class="fg"><label class="fl">Vol. uterino (cc)</label><input type="number" class="fc" id="segVolUt" value="${s?(s.volUt||''):''}"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Endometrioma mayor (mm)</label><input type="number" class="fc" id="segTamEndo" value="${s?(s.tamEndo||''):''}"></div>
+          <div class="fg"><label class="fl">Mioma mayor (mm)</label><input type="number" class="fc" id="segTamMioma" value="${s?(s.tamMioma||''):''}"></div>
+        </div>
+        <div class="fg"><label class="fl">Tratamiento médico en esta visita</label>
+          <div class="chips" id="segTxMedC">${chipsTxMed.map(c=>`<div class="chip${s&&(s.txMed||[]).includes(c)?' on':''}" onclick="ck(this)">${c}</div>`).join('')}</div>
+        </div>
+        <div class="fg"><label class="fl">Cirugías en esta visita</label>
+          <div class="chips" id="segTxQxC">${chipsTxQx.map(c=>`<div class="chip${s&&(s.txQx||[]).includes(c)?' on':''}" onclick="ck(this)">${c}</div>`).join('')}</div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Estado de tratamiento</label>
+            <select class="fc" id="segEstadoTx">
+              <option value="ninguno">Sin tratamiento activo</option><option value="medico">Tratamiento médico</option><option value="quirurgico">Post-quirúrgico</option><option value="mixto">Médico + Quirúrgico</option><option value="seguimiento">Seguimiento expectante</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Respuesta al tratamiento</label>
+            <select class="fc" id="segRespTx">
+              <option value="">—</option><option>Excelente (EVA 0–2)</option><option>Buena (EVA 3–4)</option><option>Parcial (EVA 5–6)</option><option>Escasa (EVA 7–8)</option><option>Refractaria (EVA 9–10)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Motivo de cambio de tratamiento</label>
+            <select class="fc" id="segMotivoTx"><option value="">—</option><option>Falta de eficacia</option><option>Efectos secundarios</option><option>Deseo gestacional</option><option>Cirugía programada</option><option>Preferencia de la paciente</option><option>Contraindicación médica</option><option>Otro</option></select>
+          </div>
+          <div class="fg"><label class="fl">Detalle del motivo</label><input class="fc" id="segMotivoTxTxt" value="${s?(s.motivoCambioTxTxt||''):''}"></div>
+        </div>
+        <div class="fg"><label class="fl">Nota / plan de esta visita</label><textarea class="fc" id="segNota" style="min-height:70px">${s?(s.nota||''):''}</textarea></div>
+      </div>
+      <div style="padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:${isEdit?'space-between':'flex-end'};position:sticky;bottom:0;background:var(--card)">
+        ${isEdit?`<button class="btn bd bsm" onclick="deleteSegEntry('${p.id}','${segId}',true)">🗑 Eliminar</button>`:'<div></div>'}
+        <div class="flex g2u">
+          <button class="btn bs bsm" onclick="document.getElementById('segModal').remove()">Cancelar</button>
+          <button class="btn bp bsm" onclick="saveSegEntry('${p.id}','${segId||''}')">💾 Guardar</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  if(s){
+    const setSel=(id,v)=>{const e=document.getElementById(id);if(e&&v)e.value=v;};
+    setSel('segEstadoTx',s.estadoTx);
+    setSel('segRespTx',s.respTx);
+    setSel('segMotivoTx',s.motivoCambioTx);
+  }
+}
+
+async function saveSegEntry(pid,segId){
+  const p=DB.find(x=>x.id===pid);
+  if(!p)return;
+  const fecha=document.getElementById('segFecha').value;
+  if(!fecha){tst('Indica la fecha del seguimiento','er');return;}
+
+  const g=id=>document.getElementById(id).value;
+  const snap={
+    id:segId||('s_'+Date.now()+'_'+Math.random().toString(36).slice(2,5)),
+    fecha:new Date(fecha+'T12:00:00').toISOString(),
+    evaD:g('segEvaD'), evaP:g('segEvaP'),
+    hgb:g('segHgb'), amh:g('segAmh'),
+    tamEndo:g('segTamEndo'), tamMioma:g('segTamMioma'), volUt:g('segVolUt'),
+    txMed:[...document.querySelectorAll('#segTxMedC .chip.on')].map(c=>c.textContent.trim()),
+    txQx:[...document.querySelectorAll('#segTxQxC .chip.on')].map(c=>c.textContent.trim()),
+    respTx:g('segRespTx'), estadoTx:g('segEstadoTx'),
+    efi:g('segEfi'), proxRev:g('segProxRev'),
+    motivoCambioTx:g('segMotivoTx'), motivoCambioTxTxt:g('segMotivoTxTxt').trim(),
+    nota:g('segNota').trim(),
+    manual:true
+  };
+
+  p.historial=p.historial||[];
+  const idx=p.historial.findIndex(x=>x.id===snap.id);
+  if(idx>=0)p.historial[idx]=snap; else p.historial.push(snap);
+  p.historial.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  if(p.historial.length>50)p.historial=p.historial.slice(0,50);
+  p.updatedAt=new Date().toISOString();
+
+  try{
+    await idb.put(p);
+    const i=DB.findIndex(x=>x.id===pid);
+    if(i>=0)DB[i]=p;
+  }catch(e){console.error('IDB seguimiento error:',e);}
+
+  document.getElementById('segModal').remove();
+  const box=document.getElementById('seg-'+pid);
+  if(box)box.innerHTML=renderSegInline(p);
+  const badge=document.getElementById('segBadge-'+pid);
+  if(badge){
+    const n=p.historial.length;
+    badge.textContent=n;
+    badge.style.background=n?'var(--pu)':'var(--border2)';
+    badge.style.color=n?'#fff':'var(--text3)';
+  }
+  tst('Seguimiento guardado ✓','ok');
+}
+
+async function deleteSegEntry(pid,segId,fromModal){
+  if(!confirm('¿Eliminar este seguimiento? No se puede deshacer.'))return;
+  const p=DB.find(x=>x.id===pid);
+  if(!p)return;
+  p.historial=(p.historial||[]).filter(x=>x.id!==segId);
+  p.updatedAt=new Date().toISOString();
+  try{
+    await idb.put(p);
+    const i=DB.findIndex(x=>x.id===pid);
+    if(i>=0)DB[i]=p;
+  }catch(e){console.error('IDB del seguimiento error:',e);}
+  if(fromModal){const mo=document.getElementById('segModal');if(mo)mo.remove();}
+  const box=document.getElementById('seg-'+pid);
+  if(box)box.innerHTML=renderSegInline(p);
+  const badge=document.getElementById('segBadge-'+pid);
+  if(badge){
+    const n=p.historial.length;
+    badge.textContent=n;
+    badge.style.background=n?'var(--pu)':'var(--border2)';
+    badge.style.color=n?'#fff':'var(--text3)';
+  }
+  tst('Seguimiento eliminado','er');
+}
 
 // ═══════════════════════════════════════════════
 // PATIENT MODAL
@@ -3580,22 +3869,22 @@ function getCtxRecs(p){
       if(efi>=7){
         recs.push({color:'var(--gr)',titulo:'EFI '+efi+'/10 — Pronóstico favorable',
           texto:'Intento natural o IUI con estimulación ovárica hasta 6 meses. No iniciar FIV sin fracaso previo (Rec.47 ESHRE).',
-          seccion:'fertilidad',tab:-1});
+          seccion:'scores',tab:-2});
       } else if(efi>=4){
         recs.push({color:'var(--or)',titulo:'EFI '+efi+'/10 — Pronóstico intermedio',
           texto:'Discutir FIV/ICSI vs intento natural. Valorar factor masculino y permeabilidad tubárica (Rec.49 ESHRE ⊕⊕).',
-          seccion:'fertilidad',tab:-1});
+          seccion:'scores',tab:-2});
       } else {
         recs.push({color:'var(--rd)',titulo:'EFI '+efi+'/10 — Pronóstico desfavorable',
           texto:'Proceder directamente a FIV/ICSI. No retrasar con intentos naturales (Rec.49 ESHRE).',
-          seccion:'fertilidad',tab:-1});
+          seccion:'scores',tab:-2});
       }
     } else if(endo||mioma){
       // Deseo gestacional sin EFI calculado
       recs.push({color:'var(--pu)',titulo:'EFI pendiente de calcular',
         texto:'Calcular EFI post-cirugía para orientar la vía reproductiva (natural/IUI vs FIV). '+
           'Si hay endometrioma ovárico, valorar preservación de fertilidad antes de la cirugía (Rec.59 ESHRE · Guía Asturias 2025).',
-        seccion:'fertilidad',tab:-1});
+        seccion:'scores',tab:-2});
     }
     // AMH baja con deseo gestacional — criterios cuantitativos Asturias 2025 + ESHRE Rec.59
     const amh=parseFloat(p.amh);
@@ -3628,15 +3917,15 @@ function navCtx(seccion,tab){
   cM();
   setTimeout(()=>{
     go(seccion,null);
-    // Scores: scroll directo a STEPW
+    // Scores: scroll directo a STEPW o EFI según el origen de la recomendación
     if(seccion==='scores'){
       setTimeout(()=>{
-        const el=document.querySelector('#s-scores .card.mt4');
+        const el=document.getElementById(tab===-2?'efiCard':'stepwCard');
         if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
       },150);
       return;
     }
-    // Fertilidad: scroll a calc EFI
+    // Fertilidad: scroll al primer bloque de protocolo
     if(seccion==='fertilidad'){
       setTimeout(()=>{
         const el=document.querySelector('#s-fertilidad .card');
@@ -3676,7 +3965,7 @@ function openCtx(){
 function goScoresSTEPW(){
   go('scores',null);
   setTimeout(()=>{
-    const el=document.querySelector('#s-scores .card.mt4');
+    const el=document.getElementById('stepwCard');
     if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
   },280);
 }
@@ -4738,23 +5027,82 @@ function updExpCount(){
   if(el)el.textContent=DB.length;
 }
 
+// ═══════════════════════════════════════════════
+// ANONIMIZACIÓN — para exportación de datasets de investigación
+// ═══════════════════════════════════════════════
+// Genera (y persiste) un código de anonimización estable por paciente.
+// Reutiliza el mismo código en sucesivas exportaciones para que la clave
+// de reasociación siga siendo válida.
+function ensureAnonCode(p){
+  if(!p.anonCode){
+    const base=(p.id||'').replace(/[^a-zA-Z0-9]/g,'').slice(-8).toUpperCase()||Math.random().toString(36).slice(2,10).toUpperCase();
+    p.anonCode='ANON-'+base;
+  }
+  return p.anonCode;
+}
+// Persiste en IDB los anonCode recién asignados (no bloqueante para la descarga)
+async function persistAnonCodes(pts){
+  try{await idb.putMany(pts.map(p=>({...p})));}catch(e){console.error('IDB anonCode persist error:',e);}
+}
+// Construye una copia sin identificadores directos: nombre→código, sin NHC/teléfono/id interno,
+// y con los campos de texto libre (que podrían contener datos identificativos) ocultos.
+function anonymizePatient(p){
+  const code=ensureAnonCode(p);
+  const copy=JSON.parse(JSON.stringify(p));
+  copy.anonCode=code;
+  copy.nombre=code;
+  delete copy.id; delete copy.nhc; delete copy.telefono;
+  ['notesDx','obsSint','planTx','notesFert','recurrenciaLoc','cirIntestTxt','cirUrinTxt','medConcTxt'].forEach(k=>{
+    if(copy[k])copy[k]='[oculto — anonimizado]';
+  });
+  (copy.notas||[]).forEach(n=>{if(n.texto)n.texto='[oculto — anonimizado]';});
+  (copy.historial||[]).forEach(s=>{if(s.nota)s.nota='[oculto — anonimizado]';});
+  return copy;
+}
+// Descarga la clave de reasociación (código ↔ identidad real) como archivo SEPARADO del dataset
+function dlAnonKey(pts){
+  const clave=pts.map(p=>({anonCode:p.anonCode,id:p.id,nombre:p.nombre,nhc:p.nhc||''}));
+  const payload=JSON.stringify({
+    app:'GineApp Pro',tipo:'clave_reasociacion',
+    exportDate:new Date().toISOString(),
+    aviso:'CONFIDENCIAL — permite reidentificar a las pacientes del dataset anonimizado adjunto. Conservar por separado del dataset y no compartir con terceros no autorizados.',
+    total:clave.length,
+    clave
+  },null,2);
+  dlFile(payload,`gineco_CLAVE_REASOCIACION_${ts()}.json`,'application/json');
+}
+
 // ── JSON EXPORT ──
-function expJSON(){
+async function expJSON(){
   const pts=getSel();
   if(!pts.length){tst('No hay pacientes para exportar','er');return;}
+  const anon=document.getElementById('expAnonJSON')?.checked;
+  let outPts=pts;
+  if(anon){
+    outPts=pts.map(anonymizePatient);
+    await persistAnonCodes(pts);
+  }
   const payload=JSON.stringify({
     app:'GineApp Pro',version:'2.1',
     exportDate:new Date().toISOString(),
-    total:pts.length,
-    patients:pts
+    anonimizado:!!anon,
+    total:outPts.length,
+    patients:outPts
   },null,2);
-  dlFile(payload,`gineco_backup_${ts()}.json`,'application/json');
-  tst(`${pts.length} pacientes exportadas a JSON ✓`,'ok');
+  dlFile(payload,anon?`gineco_ANONIMIZADO_${ts()}.json`:`gineco_backup_${ts()}.json`,'application/json');
+  if(anon){
+    dlAnonKey(pts);
+    tst(`${outPts.length} pacientes anonimizadas ✓ — clave de reasociación descargada aparte`,'ok');
+  } else {
+    tst(`${outPts.length} pacientes exportadas a JSON ✓`,'ok');
+  }
 }
 function previewJSON(){
   const pts=getSel();
   if(!pts.length){tst('No hay datos','er');return;}
-  const preview=JSON.stringify(pts[0],null,2).slice(0,600)+'…';
+  const anon=document.getElementById('expAnonJSON')?.checked;
+  const sample=anon?anonymizePatient(pts[0]):pts[0];
+  const preview=JSON.stringify(sample,null,2).slice(0,600)+'…';
   document.getElementById('expPreviewTxt').textContent=preview;
   document.getElementById('expPreview').style.display='block';
 }
@@ -4826,24 +5174,31 @@ function buildCSVHeader(sep,cols){
     h.push('Hgb_gdL','AMH_ngmL');
   return h.join(sep);
 }
-function expCSV(){
+async function expCSV(){
   const pts=getSel();
   if(!pts.length){tst('No hay pacientes para exportar','er');return;}
   const sep=document.getElementById('csvSep')?.value||';';
   const cols=getColSel();
   if(!cols.length){tst('Selecciona al menos una columna','er');return;}
+  const anon=document.getElementById('expAnonCSV')?.checked;
+  let outPts=pts;
+  if(anon){outPts=pts.map(anonymizePatient);await persistAnonCodes(pts);}
   const BOM='\uFEFF'; // UTF-8 BOM for Excel
-  const lines=[buildCSVHeader(sep,cols),...pts.map(p=>buildCSVRow(p,sep,cols))];
-  dlFile(BOM+lines.join('\r\n'),`gineco_datos_${ts()}.csv`,'text/csv;charset=utf-8');
-  tst(`${pts.length} pacientes exportadas a CSV ✓`,'ok');
+  const lines=[buildCSVHeader(sep,cols),...outPts.map(p=>buildCSVRow(p,sep,cols))];
+  dlFile(BOM+lines.join('\r\n'),`gineco_datos${anon?'_ANONIMIZADO':''}_${ts()}.csv`,'text/csv;charset=utf-8');
+  if(anon){dlAnonKey(pts);tst(`${outPts.length} pacientes anonimizadas ✓ — clave de reasociación descargada aparte`,'ok');}
+  else tst(`${outPts.length} pacientes exportadas a CSV ✓`,'ok');
 }
 
 // ── EXCEL (.xlsx) via HTML table trick ──
-function expXLSX(){
+async function expXLSX(){
   const pts=getSel();
   if(!pts.length){tst('No hay pacientes para exportar','er');return;}
   const cols=getColSel();
   if(!cols.length){tst('Selecciona al menos una columna','er');return;}
+  const anon=document.getElementById('expAnonCSV')?.checked;
+  let outPts=pts;
+  if(anon){outPts=pts.map(anonymizePatient);await persistAnonCodes(pts);}
   const sep=';';
   const header=buildCSVHeader(sep,cols).split(sep);
   // Build HTML table that Excel can open natively
@@ -4853,7 +5208,7 @@ function expXLSX(){
   header.forEach(h=>{ tbl+=`<th>${h}</th>`; });
   tbl+='</tr></thead><tbody>';
   const xe=v=>(v==null?'':Array.isArray(v)?v.join(' | '):String(v)).replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  pts.forEach((p,i)=>{
+  outPts.forEach((p,i)=>{
     tbl+=`<tr style="background:${i%2===0?'#ffffff':'#f8f0f6'}">`;
     // Build each cell individually to avoid split bugs
     const cells=[];
@@ -4877,8 +5232,9 @@ function expXLSX(){
     tbl+='</tr>';
   });
   tbl+='</tbody></table></body></html>';
-  dlFile(tbl,`gineco_datos_${ts()}.xls`,'application/vnd.ms-excel;charset=utf-8');
-  tst(`${pts.length} pacientes exportadas a Excel ✓`,'ok');
+  dlFile(tbl,`gineco_datos${anon?'_ANONIMIZADO':''}_${ts()}.xls`,'application/vnd.ms-excel;charset=utf-8');
+  if(anon){dlAnonKey(pts);tst(`${outPts.length} pacientes anonimizadas ✓ — clave de reasociación descargada aparte`,'ok');}
+  else tst(`${outPts.length} pacientes exportadas a Excel ✓`,'ok');
 }
 
 // ── STATS EXPORT ──
@@ -5133,6 +5489,7 @@ async function dlRptPdf(){
 
 // ── IMPORT ──
 let impData=null;
+let impIsAnon=false;
 function previewImp(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -5142,11 +5499,13 @@ function previewImp(input){
       const pts=json.patients||json;
       if(!Array.isArray(pts)){tst('Formato JSON inválido','er');return;}
       impData=pts;
+      impIsAnon=!!json.anonimizado;
       document.getElementById('impInfo').innerHTML=
         `<div class="bt">📋 Archivo listo para importar</div>
          Archivo: <strong>${file.name}</strong><br>
          Pacientes detectadas: <strong>${pts.length}</strong><br>
-         ${json.exportDate?'Exportado el: '+new Date(json.exportDate).toLocaleDateString('es'):''}`;
+         ${json.exportDate?'Exportado el: '+new Date(json.exportDate).toLocaleDateString('es'):''}
+         ${impIsAnon?'<br><span style="color:var(--or)">🕶️ Dataset anonimizado detectado — se asignarán identificadores internos nuevos (no colisionan con tu base actual) y la detección de duplicados usará el código de anonimización en vez del NHC.</span>':''}`;
       document.getElementById('impPreview').style.display='block';
       const btn=document.getElementById('impBtn');
       btn.disabled=false;btn.style.opacity='1';
@@ -5160,27 +5519,49 @@ async function doImport(){
   const mode=document.getElementById('impMode').value;
   let count=0;
   let toWrite=[];
+
+  // Nunca confía en el id incluido en el archivo si el dataset es anonimizado, si falta,
+  // o si ya existe en la BD actual — evita colisiones al importar datasets anonimizados.
+  const normalize=np=>{
+    const needsNewId=impIsAnon||!np.id||DB.some(p=>p.id===np.id);
+    return needsNewId?{...np,id:gid()}:np;
+  };
+
   if(mode==='replace'){
-    DB=[...impData];count=impData.length;
+    DB=impData.map(np=>({...np,id:(!impIsAnon&&np.id)?np.id:gid()}));
+    count=DB.length;
     try{await idb.clearStore();}catch(e){console.error('IDB clear error:',e);}
     toWrite=DB;
   } else if(mode==='merge'){
-    impData.forEach(np=>{
-      const exists=DB.findIndex(p=>p.id===np.id);
-      if(exists>=0){DB[exists]={...DB[exists],...np};toWrite.push(DB[exists]);}
-      else{DB.unshift(np);toWrite.push(np);count++;}
+    impData.forEach(raw=>{
+      // En datasets anonimizados la coincidencia se hace por anonCode (no hay NHC ni id real)
+      const existing=impIsAnon&&raw.anonCode
+        ? DB.findIndex(p=>p.anonCode&&p.anonCode===raw.anonCode)
+        : DB.findIndex(p=>p.id===raw.id);
+      if(existing>=0){
+        DB[existing]={...DB[existing],...raw,id:DB[existing].id}; // conserva el id interno real
+        toWrite.push(DB[existing]);
+      } else {
+        const np=normalize(raw);
+        DB.unshift(np);toWrite.push(np);count++;
+      }
     });
   } else { // new only
-    impData.forEach(np=>{
-      const exists=DB.find(p=>p.nhc&&p.nhc===np.nhc);
-      if(!exists){DB.unshift(np);toWrite.push(np);count++;}
+    impData.forEach(raw=>{
+      const exists=impIsAnon&&raw.anonCode
+        ? DB.some(p=>p.anonCode&&p.anonCode===raw.anonCode)
+        : DB.some(p=>p.nhc&&p.nhc===raw.nhc);
+      if(!exists){
+        const np=normalize(raw);
+        DB.unshift(np);toWrite.push(np);count++;
+      }
     });
   }
   try{await idb.putMany(toWrite);}catch(e){console.error('IDB putMany error:',e);}
   uiRefresh();
   document.getElementById('impPreview').style.display='none';
   document.getElementById('impFile').value='';
-  impData=null;
+  impData=null; impIsAnon=false;
   const btn=document.getElementById('impBtn');btn.disabled=true;btn.style.opacity='.5';
   tst(mode==='replace'?`${DB.length} pacientes importadas ✓`:`${count} pacientes nuevas añadidas ✓`,'ok');
 }
@@ -5257,6 +5638,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
         // Comprobar interacciones al cambiar chips de tx médico o medConc
         const inTx=e.target.closest('#cTM')||e.target.closest('#cMC');
         if(inTx) setTimeout(()=>checkMedInteractions(gC('cTM'),gC('cMC')),0);
+        // Comprobar escalada de línea terapéutica al cambiar tx médico (esquema B)
+        if(e.target.closest('#cTM')) setTimeout(checkEscaladaLive,0);
       }
     });
   }
