@@ -297,14 +297,15 @@ button,a{touch-action:manipulation}
 <body>
 <div id="mov" class="mov" onclick="cls()"></div>
 <aside class="sidebar" id="sb">
-  <div class="slogo"><div class="lico">🌸</div><div class="ltxt"><strong>GineApp Pro</strong></div></div>
+  <div class="slogo"><div class="lico">🌸</div><div class="ltxt"><strong>GineApp Pro</strong><span>ESHRE · SEGO · AST 2025</span></div></div>
   <nav>
     <div class="nlbl">Principal</div>
     <button class="nb on" onclick="go('dashboard',this)"><span class="ico">📊</span>Dashboard</button>
     <button class="nb" onclick="go('pacientes',this)"><span class="ico">👩</span>Pacientes<span class="bdg" id="bdgP">0</span></button>
-    <button class="nb" onclick="go('revisiones',this)"><span class="ico">📅</span>Revisiones<span class="bdg" id="bdgRev" style="display:none;background:var(--rd)">0</span></button>
+    <button class="nb" onclick="go('revisiones',this)"><span class="ico">📅</span>Agenda de Revisiones<span class="bdg" id="bdgRev" style="display:none;background:var(--rd)">0</span></button>
     <button class="nb" onclick="go('nueva',this)"><span class="ico">➕</span>Nueva Paciente</button>
     <button class="nb" onclick="go('informes',this)"><span class="ico">📄</span>Informes</button>
+    <button class="nb" onclick="go('export',this)"><span class="ico">📤</span>Exportar y Datos</button>
     <div class="nlbl">Herramientas</div>
     <button class="nb" onclick="go('scores',this)"><span class="ico">📏</span>Escalas &amp; Scores</button>
     <div class="nlbl">Protocolos</div>
@@ -320,7 +321,7 @@ button,a{touch-action:manipulation}
     <button onclick="loadDemo()" style="display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:var(--r2);color:var(--text2);background:none;font-size:12px;font-weight:500;transition:all .15s;margin-bottom:8px;border:1px solid var(--border2);width:100%;cursor:pointer;font-family:inherit" onmouseover="this.style.color='var(--gr)';this.style.borderColor='var(--gr)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">
       <span style="font-size:14px">🧪</span>Cargar demo
     </button>
-    <div>ESHRE 2022 · SEGO 2025 · AST 2025</div><div class="c3">v1.0 — (C) J.M.F. Carreira 2026</div>
+    <div>ESHRE 2022 · SEGO 2025 · AST 2025</div><div class="c3">v1.0 — (C)J.M.F. Carreira 2026</div>
   </div>
 </aside>
 <main class="main">
@@ -1313,15 +1314,6 @@ button,a{touch-action:manipulation}
 </div>
 <!-- INFORMES -->
 <div id="s-informes" class="sec">
-
-  <!-- TABS -->
-  <div class="tabs" id="infTabs">
-    <div class="tab on" onclick="sw('inf',0,this)">📄 Informe Clínico</div>
-    <div class="tab" onclick="sw('inf',1,this)">📤 Exportar Datos</div>
-    <div class="tab" onclick="sw('inf',2,this)">📥 Importar</div>
-  </div>
-
-  <!-- TAB 0: INFORME CLÍNICO -->
   <div id="infT0">
     <div class="card mb3 no-print">
       <div class="ct mb3">📄 Generador de Informes Clínicos</div>
@@ -1369,9 +1361,18 @@ button,a{touch-action:manipulation}
       <div id="rCnt"></div>
     </div>
   </div>
+</div>
+<!-- EXPORTAR E IMPORTAR -->
+<div id="s-export" class="sec">
 
-  <!-- TAB 1: EXPORTAR -->
-  <div id="infT1" style="display:none">
+  <!-- TABS -->
+  <div class="tabs" id="expTabs">
+    <div class="tab on" onclick="sw('exp',0,this)">📤 Exportar Datos</div>
+    <div class="tab" onclick="sw('exp',1,this)">📥 Importar</div>
+  </div>
+
+  <!-- TAB 0: EXPORTAR -->
+  <div id="expT0">
     <div class="g2">
       <!-- EXPORT JSON -->
       <div class="card">
@@ -1459,8 +1460,8 @@ button,a{touch-action:manipulation}
     </div>
   </div>
 
-  <!-- TAB 2: IMPORTAR -->
-  <div id="infT2" style="display:none">
+  <!-- TAB 1: IMPORTAR -->
+  <div id="expT1" style="display:none">
     <div class="card">
       <div class="chd">
         <div><div class="ct">📥 Importar datos JSON</div><div class="cs">Restaurar desde copia de seguridad</div></div>
@@ -1514,14 +1515,15 @@ button,a{touch-action:manipulation}
 <!-- MORE MENU -->
 <div id="moreMenu" style="display:none;position:fixed;bottom:60px;right:0;left:0;z-index:140;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 0;box-shadow:0 -4px 20px rgba(0,0,0,.2)">
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
-    <button class="bi" style="padding:12px 4px" onclick="moreGo('revisiones')"><span class="ic" style="font-size:17px">📅</span>Revisiones</button>
+    <button class="bi" style="padding:12px 4px" onclick="moreGo('revisiones')"><span class="ic" style="font-size:17px">📅</span>Agenda</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('tratamiento')"><span class="ic" style="font-size:17px">💊</span>Tratamiento</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('fertilidad')"><span class="ic" style="font-size:17px">🌱</span>Fertilidad</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('scores')"><span class="ic" style="font-size:17px">📏</span>Escalas</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('guias')"><span class="ic" style="font-size:17px">📋</span>Guías</button>
-    <button class="bi" style="padding:12px 4px;grid-column:span 2" onclick="moreGo('informes')"><span class="ic" style="font-size:17px">📄</span>Informes</button>
-    <button class="bi" style="padding:12px 4px;grid-column:span 1" onclick="toggleTheme();toggleMoreMenu()"><span class="ic" style="font-size:17px" id="themeIcMob">🌙</span>Tema</button>
-    <button class="bi" style="padding:12px 4px;grid-column:span 1" onclick="window.open('ayuda.html','_blank');toggleMoreMenu()"><span class="ic" style="font-size:17px">❓</span>Ayuda</button>
+    <button class="bi" style="padding:12px 4px" onclick="moreGo('informes')"><span class="ic" style="font-size:17px">📄</span>Informes</button>
+    <button class="bi" style="padding:12px 4px" onclick="moreGo('export')"><span class="ic" style="font-size:17px">📤</span>Exportar</button>
+    <button class="bi" style="padding:12px 4px" onclick="toggleTheme();toggleMoreMenu()"><span class="ic" style="font-size:17px" id="themeIcMob">🌙</span>Tema</button>
+    <button class="bi" style="padding:12px 4px;grid-column:span 4" onclick="window.open('ayuda.html','_blank');toggleMoreMenu()"><span class="ic" style="font-size:17px">❓</span>Ayuda</button>
   </div>
 </div>
 <div id="moreOverlay" style="display:none;position:fixed;inset:0;z-index:139" onclick="toggleMoreMenu()"></div>
@@ -1785,9 +1787,9 @@ function renderSavedFiltersBar(){
 // ═══════════════════════════════════════════════
 // NAV
 // ═══════════════════════════════════════════════
-const ttls={dashboard:'Dashboard',pacientes:'Pacientes',revisiones:'Revisiones',nueva:'Nueva Paciente',
+const ttls={dashboard:'Dashboard',pacientes:'Pacientes',revisiones:'Agenda de Revisiones',nueva:'Nueva Paciente',
   algoritmos:'Algoritmos Dx',tratamiento:'Tratamiento',fertilidad:'Fertilidad',
-  scores:'Escalas & Scores',guias:'Guías 2025',informes:'Informes'};
+  scores:'Escalas & Scores',guias:'Guías 2025',informes:'Informes',export:'Exportar y Datos'};
 
 function go(id,btn){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
@@ -1800,7 +1802,8 @@ function go(id,btn){
   if(id==='pacientes'){rPL();renderSavedFiltersBar();}
   if(id==='revisiones')rRevList();
   if(id==='dashboard'){uSt();dRec();}
-  if(id==='informes'){fRS();setTimeout(initInfTab,50);}
+  if(id==='informes'){fRS();}
+  if(id==='export'){setTimeout(initExpTab,50);}
   if(id==='nueva'&&!eId)clr();
   window.scrollTo(0,0);
 }
@@ -1914,7 +1917,7 @@ function sw(pfx,n,btn){
     el=el.nextElementSibling;
   }
   // refresh stats when switching to export tab
-  if(pfx==='inf'&&n===1){updExpCount();document.getElementById('statsTable').innerHTML=buildStats();}
+  if(pfx==='exp'&&n===0){updExpCount();document.getElementById('statsTable').innerHTML=buildStats();}
 }
 
 // ═══════════════════════════════════════════════
@@ -2224,9 +2227,10 @@ function showValidationModal(warns,onConfirm){
 
 // Crea un snapshot clínico de los campos que evolucionan
 function mkSnap(p){
+  const now=new Date().toISOString();
   return{
     id:'s_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),
-    fecha:new Date().toISOString(),
+    fecha:now, fechaRegistro:now,
     evaD:p.evaD, evaP:p.evaP,
     hgb:p.hgb, amh:p.amh,
     tamEndo:p.tamEndo, tamMioma:p.tamMioma, volUt:p.volUt,
@@ -2247,14 +2251,38 @@ function hasClinicChange(prev,next){
   const arrDiff=(a,b)=>JSON.stringify([...(a||[])].sort())!==JSON.stringify([...(b||[])].sort());
   return arrDiff(prev.txMed,next.txMed)||arrDiff(prev.txQx,next.txQx);
 }
+// ═══════════════════════════════════════════════
+// ESTADO ACTUAL — el último seguimiento del historial prevalece sobre
+// los campos crudos de la ficha base para EVA/analítica/tx/EFI/próxima revisión.
+// La ficha base (fillF/gD) NUNCA se toca; esto es solo una vista derivada
+// que usan el modal, la vista previa rápida y el decisor clínico contextual.
+// ═══════════════════════════════════════════════
+function getEstadoActual(p){
+  const hist=[...(p.historial||[])].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  if(!hist.length)return p;
+  const last=hist[0];
+  const overridable=['evaD','evaP','hgb','amh','tamEndo','tamMioma','volUt','txMed','txQx','respTx','estadoTx','efi','proxRev','ehp1','ehp2','ehp3','ehp4','ehp5','ehpMode','ehp30'];
+  const merged={...p};
+  overridable.forEach(k=>{
+    const v=last[k];
+    if(v!==undefined&&v!==null&&v!==''&&!(Array.isArray(v)&&v.length===0))merged[k]=v;
+  });
+  return merged;
+}
+
 function ePt(){const p=DB.find(p=>p.id===cId);if(!p)return;fillF(p);cM();go('nueva',document.querySelectorAll('.nb')[2]);}
-async function dPt(){
+async function dPtById(id,opts){
+  opts=opts||{};
   if(!confirm('¿Eliminar esta paciente? No se puede deshacer.'))return;
   // Limpiar adjuntos antes de eliminar el registro principal
-  try{await idb.clearAdjuntosByPaciente(cId);}catch(e){console.error('Error limpiando adjuntos:',e);}
-  DB=DB.filter(p=>p.id!==cId);
-  try{await idb.del(cId);}catch(e){console.error('IDB del error:',e);}
-  cM();rPL();uiRefresh();tst('Paciente eliminada','er');
+  try{await idb.clearAdjuntosByPaciente(id);}catch(e){console.error('Error limpiando adjuntos:',e);}
+  DB=DB.filter(p=>p.id!==id);
+  try{await idb.del(id);}catch(e){console.error('IDB del error:',e);}
+  if(opts.closeModal)cM();
+  rPL();uiRefresh();tst('Paciente eliminada','er');
+}
+async function dPt(){
+  await dPtById(cId,{closeModal:true});
 }
 
 // ═══════════════════════════════════════════════
@@ -2529,10 +2557,11 @@ function rPL(){
       <div class="pac vis">
         <button class="btn bs bsm bic" onclick="event.stopPropagation();qRid('${p.id}')" title="Informe">📄</button>
         <button class="btn bs bsm bic" onclick="event.stopPropagation();eById('${p.id}')" title="Editar">✏️</button>
+        <button class="btn bs bsm bic" style="color:var(--rd)" onclick="event.stopPropagation();dPtById('${p.id}')" title="Eliminar">🗑</button>
       </div>
     </div>
     <div class="seg-inline" id="seg-${p.id}" style="display:none"></div>`;
-  }).join('');
+  }).join('')+`<button class="btn bp wf mt3" style="justify-content:center" onclick="go('nueva',null)">+ Agregar paciente</button>`;
 }
 function eById(id){const p=DB.find(x=>x.id===id);if(!p)return;fillF(p);go('nueva',document.querySelectorAll('.nb')[2]);}
 
@@ -2561,6 +2590,14 @@ function renderSegInline(p){
   const rows=hist.length?hist.map(s=>{
     const d=new Date(s.fecha);
     const dStr=d.toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
+    let regNote='';
+    if(s.fechaRegistro){
+      const dr=new Date(s.fechaRegistro);
+      if(dr.toDateString()!==d.toDateString())regNote=`<div class="xs c3">Registrado: ${dr.toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'})}</div>`;
+    }
+    let trazaTag='';
+    if(s.editadoManual)trazaTag='<span class="tag to" style="font-size:9px" title="Registro automático corregido a mano">✏️ Editado</span>';
+    else if(s.manual)trazaTag='<span class="tag tpu" style="font-size:9px" title="Creado manualmente">✏️ Manual</span>';
     const resumen=[
       s.evaD?'EVA dis '+s.evaD:'',
       s.evaP?'EVA pel '+s.evaP:'',
@@ -2568,8 +2605,9 @@ function renderSegInline(p){
       (s.txMed&&s.txMed.length)?s.txMed.slice(0,2).join(', ')+(s.txMed.length>2?'…':''):''
     ].filter(Boolean).join(' · ');
     return`<div class="seg-row">
-      <div class="seg-date">${dStr}${s.manual?' <span class="xs c3" title="Registrado manualmente">✏️</span>':''}</div>
-      <div class="seg-sum">${resumen||'<span class="c3">Sin datos clínicos</span>'}</div>
+      <input type="checkbox" class="segChk" data-sid="${s.id}" style="flex-shrink:0;width:14px;height:14px">
+      <div class="seg-date">${dStr}${regNote}</div>
+      <div class="seg-sum">${trazaTag} ${resumen||'<span class="c3">Sin datos clínicos</span>'}</div>
       <div class="seg-act">
         <button class="btn bg bsm bic" onclick="openSegModal('${p.id}','${s.id}')" title="Ver / editar">✏️</button>
         <button class="btn bg bsm bic" onclick="deleteSegEntry('${p.id}','${s.id}')" title="Eliminar" style="color:var(--rd)">🗑</button>
@@ -2579,8 +2617,36 @@ function renderSegInline(p){
 
   return`<div class="seg-inline-inner">
     ${rows}
-    <button class="btn bp bsm mt2u" onclick="openSegModal('${p.id}',null)">+ Nuevo seguimiento</button>
+    <div class="flex jcb aic g2u wrap mt2u">
+      <button class="btn bp bsm" onclick="openSegModal('${p.id}',null)">+ Nueva revisión</button>
+      ${hist.length>1?`<button class="btn bg bsm" style="color:var(--rd)" onclick="deleteSegSelected('${p.id}')">🗑 Eliminar seleccionadas</button>`:''}
+    </div>
   </div>`;
+}
+async function deleteSegSelected(pid){
+  const box=document.getElementById('seg-'+pid);
+  if(!box)return;
+  const ids=[...box.querySelectorAll('.segChk:checked')].map(c=>c.dataset.sid);
+  if(!ids.length){tst('Selecciona al menos un seguimiento','er');return;}
+  if(!confirm(`¿Eliminar ${ids.length} seguimiento(s) seleccionado(s)? No se puede deshacer.`))return;
+  const p=DB.find(x=>x.id===pid);
+  if(!p)return;
+  p.historial=(p.historial||[]).filter(x=>!ids.includes(x.id));
+  p.updatedAt=new Date().toISOString();
+  try{
+    await idb.put(p);
+    const i=DB.findIndex(x=>x.id===pid);
+    if(i>=0)DB[i]=p;
+  }catch(e){console.error('IDB del seguimientos error:',e);}
+  box.innerHTML=renderSegInline(p);
+  const badge=document.getElementById('segBadge-'+pid);
+  if(badge){
+    const n=p.historial.length;
+    badge.textContent=n;
+    badge.style.background=n?'var(--pu)':'var(--border2)';
+    badge.style.color=n?'#fff':'var(--text3)';
+  }
+  tst(`${ids.length} seguimiento(s) eliminado(s)`,'er');
 }
 
 function openSegModal(pid,segId){
@@ -2607,9 +2673,9 @@ function openSegModal(pid,segId){
         <button class="btn bic bg" onclick="document.getElementById('segModal').remove()">✕</button>
       </div>
       <div style="padding:16px 18px">
-        <div class="box bi2 mb3" style="font-size:11.5px">Este seguimiento se guarda con la fecha que indiques, sin depender de la fecha actual del sistema — útil para visitas retroactivas o correcciones históricas.</div>
+        <div class="box bi2 mb3" style="font-size:11.5px">La <strong>Fecha de Revisión</strong> es la fecha clínica real de la visita — puedes registrar visitas retroactivas o corregir datos históricos, sin depender de la fecha actual del sistema.${s&&s.fechaRegistro?` <span class="c3">Registrado en la app el ${new Date(s.fechaRegistro).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'})}.</span>`:''}</div>
         <div class="fr2">
-          <div class="fg"><label class="fl">Fecha del seguimiento *</label><input type="date" class="fc" id="segFecha" value="${fechaVal}"></div>
+          <div class="fg"><label class="fl">Fecha de Revisión *</label><input type="date" class="fc" id="segFecha" value="${fechaVal}"></div>
           <div class="fg"><label class="fl">Próxima revisión</label><input type="date" class="fc" id="segProxRev" value="${s&&s.proxRev?s.proxRev:''}"></div>
         </div>
         <div class="fr3">
@@ -2673,12 +2739,14 @@ async function saveSegEntry(pid,segId){
   const p=DB.find(x=>x.id===pid);
   if(!p)return;
   const fecha=document.getElementById('segFecha').value;
-  if(!fecha){tst('Indica la fecha del seguimiento','er');return;}
+  if(!fecha){tst('Indica la Fecha de Revisión','er');return;}
 
   const g=id=>document.getElementById(id).value;
+  const prevEntry=segId?(p.historial||[]).find(x=>x.id===segId):null;
   const snap={
     id:segId||('s_'+Date.now()+'_'+Math.random().toString(36).slice(2,5)),
     fecha:new Date(fecha+'T12:00:00').toISOString(),
+    fechaRegistro:prevEntry&&prevEntry.fechaRegistro?prevEntry.fechaRegistro:new Date().toISOString(),
     evaD:g('segEvaD'), evaP:g('segEvaP'),
     hgb:g('segHgb'), amh:g('segAmh'),
     tamEndo:g('segTamEndo'), tamMioma:g('segTamMioma'), volUt:g('segVolUt'),
@@ -2688,7 +2756,8 @@ async function saveSegEntry(pid,segId){
     efi:g('segEfi'), proxRev:g('segProxRev'),
     motivoCambioTx:g('segMotivoTx'), motivoCambioTxTxt:g('segMotivoTxTxt').trim(),
     nota:g('segNota').trim(),
-    manual:true
+    manual:true,
+    editadoManual:!!prevEntry&&!prevEntry.manual // se editó a mano un registro que era automático — trazabilidad
   };
 
   p.historial=p.historial||[];
@@ -2758,7 +2827,10 @@ async function vPt(id){
     if(el)el.innerHTML=renderAdjuntos(adjs,id);
   }catch(e){console.error('Error cargando adjuntos:',e);}
 }
-function bCard(p){
+function bCard(pBase){
+  // El modal muestra el estado del último seguimiento (EVA/analítica/tx/EFI/próxima
+  // revisión), no los campos crudos de la ficha base — ver getEstadoActual().
+  const p=getEstadoActual(pBase);
   // Check upcoming review
   let revAlert='';
   if(p.proxRev){
@@ -3726,7 +3798,10 @@ function buildCtxPanel(p){
     </div>`;
 }
 
-function getCtxRecs(p){
+function getCtxRecs(pBase){
+  // Las alertas se evalúan sobre el estado más reciente (último seguimiento),
+  // no sobre la ficha base — ver getEstadoActual().
+  const p=getEstadoActual(pBase);
   const recs=[];
   const dx=p.dx||'';
   const endo=dx==='endometriosis'||dx==='ambas';
@@ -4067,8 +4142,11 @@ function rRevList(){
   const today=new Date();
   const sortDir=document.getElementById('revSort')?document.getElementById('revSort').value:'asc';
 
-  const withRev=DB.filter(p=>p.proxRev).map(p=>{
-    const d=new Date(p.proxRev);
+  // Usa el estado actual (último seguimiento) para la fecha efectiva de próxima
+  // revisión, igual que el modal y la vista previa — ver getEstadoActual().
+  const withRev=DB.filter(p=>getEstadoActual(p).proxRev).map(p=>{
+    const proxRevEfectiva=getEstadoActual(p).proxRev;
+    const d=new Date(proxRevEfectiva);
     const diff=Math.ceil((d-today)/(24*3600*1000));
     return{p,d,diff};
   });
@@ -4089,12 +4167,17 @@ function rRevList(){
     const ov=diff<0;
     const lbl=ov?`Vencida hace ${Math.abs(diff)}d`:diff===0?'Hoy':diff===1?'Mañana':`En ${diff}d`;
     const tagCls=ov?'tr':diff<=7?'to':'tgr';
+    const isoDate=d.toISOString().slice(0,10);
     return`<div class="pr" data-pid="${p.id}" onclick="vPt('${p.id}')">
       <div class="pav" style="background:${avC(p.nombre)}1a;color:${avC(p.nombre)};border:1.5px solid ${avC(p.nombre)}33">${ini(p.nombre)}</div>
       <div class="pi">
         <div class="pn">${p.nombre}</div>
         <div class="pm">${d.toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'})}${p.nhc?' · NHC:'+p.nhc:''}</div>
         <div class="ptg">${dxT(p.dx)}</div>
+      </div>
+      <div class="flex g1 aic" style="flex-shrink:0" onclick="event.stopPropagation()">
+        <input type="date" class="fc" value="${isoDate}" id="revq-${p.id}" style="padding:4px 6px;font-size:11px;width:128px" onclick="event.stopPropagation()">
+        <button class="btn bs bic bsm" title="Reprogramar fecha" onclick="event.stopPropagation();quickSetProxRev('${p.id}')">💾</button>
       </div>
       <span class="tag ${tagCls}" style="flex-shrink:0">${lbl}</span>
     </div>`;
@@ -4114,6 +4197,32 @@ function rRevList(){
     groupHTML('🔴 Vencidas',vencidas,'var(--rd)')+
     groupHTML('🟠 Próximos 7 días',proximas,'var(--or)')+
     groupHTML('📅 Próximas revisiones',futuras,'var(--text2)');
+}
+
+// Reprograma la próxima revisión directamente desde la Agenda de Revisiones,
+// sin abrir el modal completo. Si la paciente tiene seguimientos, actualiza el
+// campo proxRev del último (para no desincronizar el estado actual mostrado en
+// el modal); si no, actualiza el campo de la ficha base.
+async function quickSetProxRev(pid){
+  const inp=document.getElementById('revq-'+pid);
+  if(!inp||!inp.value){tst('Indica una fecha válida','er');return;}
+  const p=DB.find(x=>x.id===pid);
+  if(!p)return;
+  const hist=[...(p.historial||[])].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  if(hist.length){
+    const idx=p.historial.findIndex(s=>s.id===hist[0].id);
+    if(idx>=0)p.historial[idx].proxRev=inp.value;
+  }
+  p.proxRev=inp.value;
+  p.updatedAt=new Date().toISOString();
+  try{
+    await idb.put(p);
+    const i=DB.findIndex(x=>x.id===pid);
+    if(i>=0)DB[i]=p;
+  }catch(e){console.error('IDB quickSetProxRev error:',e);}
+  rRevList();
+  uiRefresh();
+  tst('Próxima revisión reprogramada ✓','ok');
 }
 
 function uBdg(){
@@ -4849,7 +4958,8 @@ document.addEventListener('keydown',e=>{
   const LP_MS=480;         // duración para considerar long-press
   const LP_MOVE_TOL=10;    // tolerancia de movimiento en px antes de cancelar
 
-  function buildQuickPreview(p){
+  function buildQuickPreview(pBase){
+    const p=getEstadoActual(pBase);
     const evaD=p.evaD||0,evaP=p.evaP||0;
     const evaMax=Math.max(parseFloat(evaD)||0,parseFloat(evaP)||0);
     const evaCol=evaMax<=3?'var(--gr)':evaMax<=6?'var(--or)':'var(--rd)';
@@ -5574,8 +5684,8 @@ async function clearAll(){
   dRec();tst('Base de datos borrada','er');
 }
 
-// ── INIT INFORMES TAB ──
-function initInfTab(){
+// ── INIT EXPORTAR TAB ──
+function initExpTab(){
   updExpCount();
   document.getElementById('statsTable').innerHTML=buildStats();
 }
