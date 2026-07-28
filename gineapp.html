@@ -321,7 +321,9 @@ button,a{touch-action:manipulation}
     <button onclick="loadDemo()" style="display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:var(--r2);color:var(--text2);background:none;font-size:12px;font-weight:500;transition:all .15s;margin-bottom:8px;border:1px solid var(--border2);width:100%;cursor:pointer;font-family:inherit" onmouseover="this.style.color='var(--gr)';this.style.borderColor='var(--gr)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">
       <span style="font-size:14px">🧪</span>Cargar demo
     </button>
-    <div>ESHRE 2022 · SEGO 2025 · AST 2025</div><div class="c3">v1.0 — (C)J.M.F. Carreira 2026</div>
+    <button onclick="oAboutM()" style="display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:var(--r2);color:var(--text2);background:none;font-size:12px;font-weight:500;transition:all .15s;border:1px solid var(--border2);width:100%;cursor:pointer;font-family:inherit" onmouseover="this.style.color='var(--pu)';this.style.borderColor='var(--pu)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">
+      <span style="font-size:14px">ℹ️</span>Acerca de…
+    </button>
   </div>
 </aside>
 <main class="main">
@@ -1543,6 +1545,38 @@ button,a{touch-action:manipulation}
     </div>
   </div>
 </div>
+<!-- MODAL ACERCA DE -->
+<div class="ovl" id="aboutM">
+  <div class="modal" style="max-width:440px;margin:0 auto">
+    <div class="mhd">
+      <div class="mt2">ℹ️ Acerca de GineApp Pro</div>
+      <button class="btn bic bg" onclick="cAboutM()">✕</button>
+    </div>
+    <div class="mbdy">
+      <div class="mb3">
+        <div class="xs c3 f6 mb2" style="text-transform:uppercase;letter-spacing:.8px">Autor</div>
+        <div class="sm f6">Dr. J.M. Fernández Carreira</div>
+        <div class="xs c2 mt2u">ORCID: <a href="https://orcid.org/0000-0002-4097-3224" target="_blank" rel="noopener" style="color:var(--pk)">0000-0002-4097-3224</a></div>
+      </div>
+      <hr class="div">
+      <div class="mb3">
+        <div class="xs c3 f6 mb2" style="text-transform:uppercase;letter-spacing:.8px">Colaboradores</div>
+        <!-- Colaborador 1 — sustituir por el nombre real -->
+        <div class="sm c2">Nombre Apellido — Rol / Institución</div>
+        <!-- Colaborador 2 — sustituir por el nombre real -->
+        <div class="sm c2">Nombre Apellido — Rol / Institución</div>
+        <!-- Colaborador 3 — sustituir por el nombre real -->
+        <div class="sm c2">Nombre Apellido — Rol / Institución</div>
+      </div>
+      <hr class="div">
+      <div class="xs c3">Guías clínicas de referencia: ESHRE 2022 · SEGO 2025 · AST 2025</div>
+      <div class="xs c3 mt2u">GineApp Pro v1.0 — © J.M.F. Carreira 2026</div>
+    </div>
+    <div class="mft">
+      <button class="btn bp bsm" onclick="cAboutM()">Cerrar</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script>
 // ═══════════════════════════════════════════════
@@ -2270,6 +2304,17 @@ function getEstadoActual(p){
   return merged;
 }
 
+// Devuelve la info de alta si el seguimiento MÁS RECIENTE de la paciente
+// (por Fecha de Revisión) está marcado como alta. Si la paciente tiene
+// seguimientos posteriores sin marcar, ya no se considera "de alta" (reingreso).
+function getAltaInfo(p){
+  const hist=[...(p.historial||[])].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  if(!hist.length)return null;
+  const last=hist[0];
+  if(!last.esAlta)return null;
+  return{fecha:last.fecha,causa:last.causaAlta||'',causaTxt:last.causaAltaTxt||''};
+}
+
 function ePt(){const p=DB.find(p=>p.id===cId);if(!p)return;fillF(p);cM();go('nueva',document.querySelectorAll('.nb')[2]);}
 async function dPtById(id,opts){
   opts=opts||{};
@@ -2598,6 +2643,7 @@ function renderSegInline(p){
     let trazaTag='';
     if(s.editadoManual)trazaTag='<span class="tag to" style="font-size:9px" title="Registro automático corregido a mano">✏️ Editado</span>';
     else if(s.manual)trazaTag='<span class="tag tpu" style="font-size:9px" title="Creado manualmente">✏️ Manual</span>';
+    const altaTag=s.esAlta?`<span class="tag tr" style="font-size:9px" title="${s.causaAlta==='Otra'?s.causaAltaTxt:s.causaAlta}">🏁 Alta${s.causaAlta?' — '+s.causaAlta:''}</span>`:'';
     const resumen=[
       s.evaD?'EVA dis '+s.evaD:'',
       s.evaP?'EVA pel '+s.evaP:'',
@@ -2607,7 +2653,7 @@ function renderSegInline(p){
     return`<div class="seg-row">
       <input type="checkbox" class="segChk" data-sid="${s.id}" style="flex-shrink:0;width:14px;height:14px">
       <div class="seg-date">${dStr}${regNote}</div>
-      <div class="seg-sum">${trazaTag} ${resumen||'<span class="c3">Sin datos clínicos</span>'}</div>
+      <div class="seg-sum">${altaTag} ${trazaTag} ${resumen||'<span class="c3">Sin datos clínicos</span>'}</div>
       <div class="seg-act">
         <button class="btn bg bsm bic" onclick="openSegModal('${p.id}','${s.id}')" title="Ver / editar">✏️</button>
         <button class="btn bg bsm bic" onclick="deleteSegEntry('${p.id}','${s.id}')" title="Eliminar" style="color:var(--rd)">🗑</button>
@@ -2717,6 +2763,26 @@ function openSegModal(pid,segId){
           <div class="fg"><label class="fl">Detalle del motivo</label><input class="fc" id="segMotivoTxTxt" value="${s?(s.motivoCambioTxTxt||''):''}"></div>
         </div>
         <div class="fg"><label class="fl">Nota / plan de esta visita</label><textarea class="fc" id="segNota" style="min-height:70px">${s?(s.nota||''):''}</textarea></div>
+        <hr class="div">
+        <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;margin-bottom:10px">
+          <input type="checkbox" id="segEsAlta" style="width:16px;height:16px;flex-shrink:0" onchange="toggleAltaFields()" ${s&&s.esAlta?'checked':''}>
+          <span class="sm f6">🏁 Esta revisión marca el <strong>alta</strong> de la paciente (fin de seguimiento)</span>
+        </label>
+        <div id="altaFieldsWrap" style="display:${s&&s.esAlta?'block':'none'}">
+          <div class="fr2">
+            <div class="fg"><label class="fl">Causa del alta</label>
+              <select class="fc" id="segCausaAlta" onchange="document.getElementById('segCausaAltaTxtWrap').style.display=this.value==='Otra'?'block':'none'">
+                <option value="">—</option>
+                <option>Resolución del problema</option>
+                <option>Traslado a otro centro</option>
+                <option>Éxitus</option>
+                <option>Otra</option>
+              </select>
+            </div>
+            <div class="fg" id="segCausaAltaTxtWrap" style="display:${s&&s.causaAlta==='Otra'?'block':'none'}"><label class="fl">Especificar</label><input class="fc" id="segCausaAltaTxt" value="${s?(s.causaAltaTxt||''):''}"></div>
+          </div>
+          <div class="box bw" style="font-size:11.5px">Al marcar el alta, el informe clínico completo de esta paciente se generará como <strong>Informe de Alta</strong>, indicando fecha y causa. Solo debe marcarse en la revisión que realmente cierra el seguimiento.</div>
+        </div>
       </div>
       <div style="padding:11px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:${isEdit?'space-between':'flex-end'};position:sticky;bottom:0;background:var(--card)">
         ${isEdit?`<button class="btn bd bsm" onclick="deleteSegEntry('${p.id}','${segId}',true)">🗑 Eliminar</button>`:'<div></div>'}
@@ -2732,7 +2798,15 @@ function openSegModal(pid,segId){
     setSel('segEstadoTx',s.estadoTx);
     setSel('segRespTx',s.respTx);
     setSel('segMotivoTx',s.motivoCambioTx);
+    setSel('segCausaAlta',s.causaAlta);
   }
+}
+
+// Muestra/oculta el bloque de causa de alta según el checkbox "Esta revisión marca el alta"
+function toggleAltaFields(){
+  const chk=document.getElementById('segEsAlta');
+  const wrap=document.getElementById('altaFieldsWrap');
+  if(chk&&wrap)wrap.style.display=chk.checked?'block':'none';
 }
 
 async function saveSegEntry(pid,segId){
@@ -2756,6 +2830,9 @@ async function saveSegEntry(pid,segId){
     efi:g('segEfi'), proxRev:g('segProxRev'),
     motivoCambioTx:g('segMotivoTx'), motivoCambioTxTxt:g('segMotivoTxTxt').trim(),
     nota:g('segNota').trim(),
+    esAlta:document.getElementById('segEsAlta').checked,
+    causaAlta:document.getElementById('segEsAlta').checked?g('segCausaAlta'):'',
+    causaAltaTxt:document.getElementById('segEsAlta').checked?document.getElementById('segCausaAltaTxt').value.trim():'',
     manual:true,
     editadoManual:!!prevEntry&&!prevEntry.manual // se editó a mano un registro que era automático — trazabilidad
   };
@@ -2831,14 +2908,16 @@ function bCard(pBase){
   // El modal muestra el estado del último seguimiento (EVA/analítica/tx/EFI/próxima
   // revisión), no los campos crudos de la ficha base — ver getEstadoActual().
   const p=getEstadoActual(pBase);
-  // Check upcoming review
+  const alta=getAltaInfo(pBase);
+  // Check upcoming review (no aplica si la paciente ya está de alta)
   let revAlert='';
-  if(p.proxRev){
+  if(p.proxRev&&!alta){
     const d=new Date(p.proxRev),now=new Date(),diff=Math.ceil((d-now)/(24*3600*1000));
     if(diff<0) revAlert=`<div class="box br mt2u xs">⚠️ Revisión vencida: ${d.toLocaleDateString('es')}</div>`;
     else if(diff<=14) revAlert=`<div class="box bw mt2u xs">⏰ Revisión en ${diff} días: ${d.toLocaleDateString('es')}</div>`;
     else revAlert=`<div class="xs c2 mt2u">⏰ Próxima revisión: ${d.toLocaleDateString('es')}</div>`;
   }
+  const altaBanner=alta?`<div class="box br mb3"><div class="bt">🏁 Paciente de alta</div><div class="sm">${alta.causa==='Otra'?alta.causaTxt:(alta.causa||'Sin causa especificada')} — ${new Date(alta.fecha).toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'})}</div></div>`:'';
   // History line
   const created=new Date(p.createdAt).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
   const updated=p.updatedAt&&p.updatedAt!==p.createdAt?` · Actualizado: ${new Date(p.updatedAt).toLocaleDateString('es',{day:'numeric',month:'short'})}`:'' ;
@@ -2848,9 +2927,10 @@ function bCard(pBase){
     <div style="flex:1;min-width:0">
       <div style="font-size:16px;font-weight:700">${p.nombre}</div>
       <div class="sm c2">${age(p.fechaNac)} años${p.paridad?' · '+p.paridad:''}${p.estadoCivil?' · '+p.estadoCivil:''}</div>
-      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${dxT(p.dx)}${p.deseoGestacion!=='no'?'<span class="tag tg">🌱 Gestación</span>':''}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${dxT(p.dx)}${p.deseoGestacion!=='no'?'<span class="tag tg">🌱 Gestación</span>':''}${alta?'<span class="tag tr">🏁 Alta</span>':''}</div>
     </div>
   </div>
+  ${altaBanner}
   ${p.nhc?`<div class="xs c2 mb3" style="font-family:monospace">NHC: ${p.nhc}${p.telefono?' · 📞 '+p.telefono:''}</div>`:''}
   ${p.sintomas&&p.sintomas.length?`
     <div class="mb3">
@@ -3602,6 +3682,7 @@ function buildHistorialHTML(p){
       <div style="flex:1;min-width:0;padding-bottom:4px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">
           <div class="xs f6" style="color:var(--text)">${dStr}</div>
+          ${s.esAlta?`<span class="tag tr" style="font-size:10px">🏁 Alta${s.causaAlta?' · '+s.causaAlta:''}</span>`:''}
           ${s.respTx?`<span class="tag tgr" style="font-size:10px">${s.respTx.split('(')[0].trim()}</span>`:''}
         </div>
         ${cambios.length?`<div class="xs c2" style="margin-top:3px;line-height:1.6">${cambios.join(' · ')}</div>`:''}
@@ -4047,6 +4128,8 @@ function goScoresSTEPW(){
 
 function oM(){document.getElementById('ptM').classList.add('open');document.body.style.overflow='hidden';}
 function cM(){document.getElementById('ptM').classList.remove('open');document.body.style.overflow='';}
+function oAboutM(){document.getElementById('aboutM').classList.add('open');document.body.style.overflow='hidden';}
+function cAboutM(){document.getElementById('aboutM').classList.remove('open');document.body.style.overflow='';}
 
 // ═══════════════════════════════════════════════
 // STATS & DASHBOARD
@@ -4115,11 +4198,11 @@ function buildReviewAlerts(){
   if(!el)return;
   const today=new Date();
   const upcoming=DB.filter(p=>{
-    if(!p.proxRev)return false;
+    if(!p.proxRev||getAltaInfo(p))return false;
     const diff=Math.ceil((new Date(p.proxRev)-today)/(24*3600*1000));
     return diff<=14;
   }).sort((a,b)=>new Date(a.proxRev)-new Date(b.proxRev)).slice(0,4);
-  const totalConRev=DB.filter(p=>p.proxRev).length;
+  const totalConRev=DB.filter(p=>p.proxRev&&!getAltaInfo(p)).length;
   const verTodas=totalConRev>0?`<div style="text-align:right;margin-top:4px"><button class="btn bg bsm" style="font-size:11.5px;padding:3px 8px" onclick="go('revisiones',null)">Ver todas (${totalConRev}) →</button></div>`:'';
   if(!upcoming.length){el.innerHTML='<div class="xs c2" style="padding:6px 0">✓ Sin revisiones próximas pendientes</div>'+verTodas;return;}
   el.innerHTML=upcoming.map(p=>{
@@ -4144,7 +4227,7 @@ function rRevList(){
 
   // Usa el estado actual (último seguimiento) para la fecha efectiva de próxima
   // revisión, igual que el modal y la vista previa — ver getEstadoActual().
-  const withRev=DB.filter(p=>getEstadoActual(p).proxRev).map(p=>{
+  const withRev=DB.filter(p=>getEstadoActual(p).proxRev&&!getAltaInfo(p)).map(p=>{
     const proxRevEfectiva=getEstadoActual(p).proxRev;
     const d=new Date(proxRevEfectiva);
     const diff=Math.ceil((d-today)/(24*3600*1000));
@@ -4227,7 +4310,7 @@ async function quickSetProxRev(pid){
 
 function uBdg(){
   document.getElementById('bdgP').textContent=DB.length;
-  const ov=DB.filter(p=>p.proxRev&&new Date(p.proxRev)<new Date()).length;
+  const ov=DB.filter(p=>p.proxRev&&!getAltaInfo(p)&&new Date(p.proxRev)<new Date()).length;
   const b=document.getElementById('bdgAlert');
   if(b){
     b.textContent=ov===1?'1 vencida':ov+' vencidas';
@@ -4775,9 +4858,14 @@ function bRpt(p,type){
   const fecha=new Date().toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
   const dxL={endometriosis:'Endometriosis',miomas:'Miomas Uterinos',ambas:'Endometriosis + Miomas',sospecha:'Sospecha pendiente'};
   const row=(k,v)=>v?`<div class="rr"><span class="rk">${k}</span><span class="rv">${v}</span></div>`:'';
-  const hdr=`<div style="text-align:center;padding-bottom:14px;border-bottom:2px solid var(--pk);margin-bottom:16px">
-    <div style="font-size:17px;font-weight:700;color:var(--pk)">GineApp Pro — Informe Clínico</div>
-    <div class="xs c2">ESHRE 2022 · SEGO 2025 · ${fecha}</div></div>`;
+  // El informe completo se marca como "Informe de Alta" si el seguimiento más
+  // reciente de la paciente está marcado como tal — ver getAltaInfo().
+  const altaRpt=(type==='clinico')?getAltaInfo(p):null;
+  const hdr=`<div style="text-align:center;padding-bottom:14px;border-bottom:2px solid ${altaRpt?'var(--rd)':'var(--pk)'};margin-bottom:16px">
+    <div style="font-size:17px;font-weight:700;color:${altaRpt?'var(--rd)':'var(--pk)'}">GineApp Pro — ${altaRpt?'🏁 INFORME DE ALTA':'Informe Clínico'}</div>
+    <div class="xs c2">ESHRE 2022 · SEGO 2025 · ${fecha}</div>
+    ${altaRpt?`<div class="xs" style="margin-top:6px;color:var(--rd)"><strong>Causa del alta:</strong> ${altaRpt.causa==='Otra'?altaRpt.causaTxt:(altaRpt.causa||'Sin especificar')} — <strong>Fecha:</strong> ${new Date(altaRpt.fecha).toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'})}</div>`:''}
+  </div>`;
   let body='';
   if(type==='clinico'||type==='dx'){
     body+=`<div class="rs"><h3>1. Datos de la Paciente</h3>${row('Nombre',p.nombre)}${row('NHC',p.nhc)}${row('Edad',age(p.fechaNac)+' años')}${row('Fecha nacimiento',p.fechaNac?new Date(p.fechaNac).toLocaleDateString('es'):'—')}${row('Estado civil',p.estadoCivil)}${row('Paridad',p.paridad)}${row('IMC',p.imc?p.imc+' kg/m²':'—')}${row('Menarquia',p.menarquia?p.menarquia+' años':'—')}</div>`;
@@ -4886,8 +4974,9 @@ function bRpt(p,type){
     body+=`<div class="rs"><h3>${_secNum}. Historial de Seguimiento</h3>`;
     hist.forEach((s,i)=>{
       const d=new Date(s.fecha).toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
-      body+=`<div style="margin-bottom:10px;padding:8px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--pk)">`;
-      body+=`<div class="xs f6" style="color:var(--pk);margin-bottom:4px">Visita ${hist.length-i} · ${d}</div>`;
+      body+=`<div style="margin-bottom:10px;padding:8px;background:var(--bg3);border-radius:6px;border-left:3px solid ${s.esAlta?'var(--rd)':'var(--pk)'}">`;
+      body+=`<div class="xs f6" style="color:${s.esAlta?'var(--rd)':'var(--pk)'};margin-bottom:4px">Visita ${hist.length-i} · ${d}${s.esAlta?' · 🏁 ALTA':''}</div>`;
+      if(s.esAlta)body+=rh('Causa del alta',s.causaAlta==='Otra'?s.causaAltaTxt:s.causaAlta);
       body+=rh('EVA dismenorrea',s.evaD?s.evaD+'/10':'');
       body+=rh('EVA dolor pélvico',s.evaP?s.evaP+'/10':'');
       body+=rh('Hemoglobina',s.hgb?s.hgb+' g/dL':'');
@@ -4941,7 +5030,7 @@ async function loadDemo(){
 // KEYBOARD SHORTCUTS
 // ═══════════════════════════════════════════════
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){cM();}
+  if(e.key==='Escape'){cM();cAboutM();}
   if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('gs').focus();}
 });
 
