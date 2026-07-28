@@ -235,9 +235,13 @@ kbd{
     <a class="sna" onclick="nav('revisiones',this)"><span class="ico">📅</span>Agenda de Revisiones</a>
     <a class="sna" onclick="nav('filtros',this)"><span class="ico">🔍</span>Filtros avanzados</a>
     <a class="sna" onclick="nav('informes',this)"><span class="ico">📄</span>Informes clínicos</a>
-    <a class="sna" onclick="nav('exportar',this)"><span class="ico">📤</span>Exportar e importar</a>
+    <a class="sna" onclick="nav('exportar',this)"><span class="ico">📤</span>Exportar y Datos</a>
 
     <div class="snlbl">Nuevas funciones</div>
+    <a class="sna" onclick="nav('seguimientos',this)"><span class="ico">📈</span>Seguimientos y estado actual</a>
+    <a class="sna" onclick="nav('secuencialidad',this)"><span class="ico">🔀</span>Secuencialidad de tratamiento</a>
+    <a class="sna" onclick="nav('alta',this)"><span class="ico">🏁</span>Alta de pacientes</a>
+    <a class="sna" onclick="nav('anonimizacion',this)"><span class="ico">🕶️</span>Anonimización de datos</a>
     <a class="sna" onclick="nav('adjuntos',this)"><span class="ico">📎</span>Adjuntos clínicos</a>
     <a class="sna" onclick="nav('notas',this)"><span class="ico">📝</span>Notas de visita</a>
     <a class="sna" onclick="nav('enfermeria',this)"><span class="ico">🩺</span>Valoración de enfermería</a>
@@ -305,13 +309,13 @@ kbd{
       <div class="page-sub">Descripción de los elementos principales de navegación y uso en escritorio y móvil.</div>
 
       <h2>Barra lateral (escritorio)</h2>
-      <p>El menú lateral está siempre visible en pantallas ≥768px. Contiene acceso directo a las 9 secciones organizadas en tres grupos: Principal, Evaluación y Herramientas. El badge rosa junto a «Pacientes» muestra el número total registradas.</p>
+      <p>El menú lateral está siempre visible en pantallas ≥768px. Contiene acceso directo a las 11 secciones organizadas en tres grupos: <strong>Principal</strong> (Dashboard, Pacientes, Agenda de Revisiones, Nueva Paciente, Informes, Exportar y Datos), <strong>Herramientas</strong> (Escalas &amp; Scores) y <strong>Protocolos</strong> (Algoritmos Dx, Tratamiento, Fertilidad, Guías 2025). El badge rosa junto a «Pacientes» muestra el número total registradas, y el badge rojo junto a «Agenda de Revisiones» el número de revisiones vencidas.</p>
 
       <h2>Topbar</h2>
       <p>La barra superior contiene el <strong>buscador global</strong> (filtra pacientes por nombre o NHC y navega automáticamente a la lista), el <strong>toggle de tema</strong> 🌙/☀️ y, en móvil, el botón ☰ para abrir el drawer lateral.</p>
 
       <h2>Bottom navigation (móvil)</h2>
-      <p>En pantallas &lt;768px aparece una barra inferior con 5 botones: Dashboard, Pacientes, Nueva, Algoritmos y <strong>⋯ Más</strong>. El menú Más despliega un grid con Tratamiento, Fertilidad, Escalas, Guías, Informes y el toggle de tema.</p>
+      <p>En pantallas &lt;768px aparece una barra inferior con 5 botones: Dashboard, Pacientes, Nueva, Algoritmos y <strong>⋯ Más</strong>. El menú Más despliega un grid con Agenda de Revisiones, Tratamiento, Fertilidad, Escalas, Guías, Informes, Exportar, el toggle de tema y Ayuda.</p>
 
       <h2>Modal de paciente</h2>
       <p>Al tocar cualquier fila de paciente se abre un panel deslizante desde la parte inferior con toda la información clínica. En móvil se puede cerrar con un swipe hacia abajo. El footer del modal tiene 4 acciones:</p>
@@ -343,7 +347,7 @@ kbd{
       <p>El botón <strong>🔍 Filtros avanzados</strong> despliega un panel adicional con edad, EVA, rASRM, FIGO y estado de revisión. Ver la sección <a href="#" onclick="nav('filtros',null)">Filtros avanzados</a> para el detalle completo.</p>
 
       <h2>Nueva paciente</h2>
-      <p>Accede desde el menú lateral, el botón ➕ del bottom nav o la quick-action del dashboard. El formulario tiene 5 tabs con <strong>badges de completitud</strong> que indican cuántos campos clave tiene cada pestaña rellenos (verde ✓ = completo, naranja N/M = parcial).</p>
+      <p>Accede desde el menú lateral, el botón ➕ del bottom nav, la quick-action del dashboard, o el botón <strong>«+ Agregar paciente»</strong> al pie de la lista de Pacientes — los cuatro llevan al mismo formulario. El formulario tiene 5 tabs con <strong>badges de completitud</strong> que indican cuántos campos clave tiene cada pestaña rellenos (verde ✓ = completo, naranja N/M = parcial).</p>
 
       <div class="box bw"><div class="bt">⚠️ Validación clínica</div>Al guardar, la app detecta automáticamente incoherencias (ej: rASRM con diagnóstico de miomas, TRA activa sin deseo gestacional, valores analíticos fuera de rango). Se muestra un aviso no bloqueante — puedes guardar igualmente o volver a corregir.</div>
 
@@ -351,7 +355,7 @@ kbd{
       <p>Desde el modal de paciente pulsa <strong>✏️ Editar</strong>, o desde la lista de pacientes pulsa el icono ✏️ que aparece al pasar el cursor (o siempre visible en móvil). Al guardar una edición con cambios clínicos relevantes, se genera automáticamente una entrada en el <strong>historial longitudinal</strong>.</p>
 
       <h2>Eliminar paciente</h2>
-      <p>Desde el modal de paciente, botón <strong>🗑 Eliminar</strong>. La acción pide confirmación y no se puede deshacer. Se recomienda exportar un backup JSON antes de eliminar registros.</p>
+      <p>Se puede eliminar de dos formas equivalentes: desde el modal de paciente (botón <strong>🗑 Eliminar</strong>) o directamente desde la fila de la lista de Pacientes (icono 🗑 junto a 📄/✏️), sin necesidad de abrir la ficha. Ambas piden confirmación y la acción no se puede deshacer. Se recomienda exportar un backup JSON antes de eliminar registros.</p>
     </div>
 
     <!-- FORMULARIO -->
@@ -404,9 +408,11 @@ kbd{
     <!-- HISTORIAL -->
     <div class="section" id="s-historial">
       <div class="page-title">Historial longitudinal</div>
-      <div class="page-sub">Seguimiento automático de la evolución clínica de cada paciente a lo largo del tiempo.</div>
+      <div class="page-sub">Registro automático y manual de la evolución clínica de cada paciente a lo largo del tiempo.</div>
 
-      <h2>Cómo funciona</h2>
+      <div class="box bi"><div class="bt">📈 Panel inline y estado actual</div>Además de generarse automáticamente al guardar la ficha, el historial puede crearse y editarse a mano directamente desde el listado de pacientes, y el seguimiento más reciente pasa a ser el "estado actual" que ves en el modal. Ver el detalle completo en <a href="#" onclick="nav('seguimientos',null)">Seguimientos y estado actual</a>.</div>
+
+      <h2>Cómo funciona (generación automática)</h2>
       <p>Cada vez que guardas una edición de una paciente, la app compara automáticamente la versión nueva con la anterior en los campos clínicos relevantes. Si detecta algún cambio, crea una <strong>entrada en el historial</strong> sin que tengas que hacer nada extra.</p>
 
       <h2>Campos monitorizados</h2>
@@ -470,6 +476,8 @@ kbd{
     <div class="section" id="s-tratamiento">
       <div class="page-title">Tratamiento</div>
       <div class="page-sub">Guías de tratamiento médico y quirúrgico según ESHRE 2022, SEGO 2025 y Guía Asturias 2025.</div>
+
+      <div class="box bi"><div class="bt">🔀 Vigilancia de la secuencia de líneas</div>El formulario de paciente detecta automáticamente saltos de línea terapéutica sin documentar y sugiere registrar el motivo del cambio. Ver <a href="#" onclick="nav('secuencialidad',null)">Secuencialidad de tratamiento</a>.</div>
 
       <h2>Endo — Dolor</h2>
       <p>Algoritmo de tratamiento del dolor en endometriosis con líneas terapéuticas diferenciadas, principios quirúrgicos (excisión &gt; ablación, quistectomía &gt; drenaje) y recomendaciones de prevención de recurrencia post-cirugía (LNG-IUS o ACO ≥18–24 meses, Rec.65).</p>
@@ -623,8 +631,10 @@ kbd{
 
     <!-- EXPORTAR -->
     <div class="section" id="s-exportar">
-      <div class="page-title">Exportar e importar</div>
-      <div class="page-sub">Backup, exportación estadística e importación de datos.</div>
+      <div class="page-title">Exportar y Datos</div>
+      <div class="page-sub">Backup, exportación estadística, importación y gestión de datos locales — accesible desde su propia entrada en el menú lateral (y en «Más» en móvil), independiente de Informes.</div>
+
+      <div class="box bi"><div class="bt">🕶️ Exportación anonimizada</div>Tanto la exportación a JSON como a CSV/Excel incluyen un checkbox para anonimizar (en realidad pseudonimizar) los datos antes de descargarlos. Ver el detalle completo en <a href="#" onclick="nav('anonimizacion',null)">Anonimización de datos</a>.</div>
 
       <h2>Exportar a JSON</h2>
       <p>Copia de seguridad completa de todos los datos (o un subconjunto filtrado por patología). Incluye metadatos de exportación. <strong>Formato recomendado para backups regulares.</strong></p>
@@ -728,30 +738,160 @@ kbd{
       <div class="page-sub">Cómo se almacenan y protegen los datos de los pacientes.</div>
 
       <h2>Almacenamiento local</h2>
-      <p>Todos los datos se guardan exclusivamente en el <strong>localStorage del navegador</strong> de tu dispositivo. No se envían a ningún servidor externo ni se comparten con terceros. GineApp Pro no tiene backend, no usa cookies de rastreo y no requiere cuenta de usuario.</p>
+      <p>Los datos clínicos (pacientes, historial, adjuntos, notas de visita, valoraciones de enfermería) se guardan en <strong>IndexedDB</strong>, la base de datos local del navegador — no en <code>localStorage</code>. Solo las preferencias ligeras de la interfaz usan <code>localStorage</code>. En ningún caso los datos se envían a ningún servidor externo ni se comparten con terceros: GineApp Pro no tiene backend, no usa cookies de rastreo y no requiere cuenta de usuario.</p>
 
       <table class="tbl">
-        <tr><th>Clave</th><th>Contenido</th></tr>
-        <tr><td><code>gapp2_pts</code></td><td>Array JSON con todas las pacientes y su historial</td></tr>
-        <tr><td><code>gapp2_theme</code></td><td>Preferencia de tema (dark / light)</td></tr>
+        <tr><th>Almacén</th><th>Tecnología</th><th>Contenido</th></tr>
+        <tr><td><code>pacientes</code></td><td>IndexedDB</td><td>Todas las pacientes: datos personales, diagnóstico, tratamiento, historial de seguimiento, notas de visita, valoraciones de enfermería</td></tr>
+        <tr><td><code>adjuntos</code></td><td>IndexedDB</td><td>Imágenes y PDFs adjuntos, separados del registro de la paciente</td></tr>
+        <tr><td><code>gapp2_theme</code></td><td>localStorage</td><td>Preferencia de tema (dark / light)</td></tr>
+        <tr><td><code>gapp2_saved_filters</code></td><td>localStorage</td><td>Filtros guardados en la lista de Pacientes</td></tr>
       </table>
+      <div class="box bi"><div class="bt">ℹ️ Migración automática</div>Si la app detecta datos de una versión anterior guardados en <code>localStorage</code> (clave <code>gapp2_pts</code>), los migra automáticamente a IndexedDB la primera vez que se abre tras actualizar, sin que tengas que hacer nada.</div>
 
       <h2>Capacidad de almacenamiento</h2>
-      <p>El localStorage tiene un límite aproximado de <strong>5 MB por origen</strong>. Con el historial longitudinal activado, cada paciente ocupa aproximadamente 7–10 KB con 3–5 entradas de historial. Estimación orientativa de capacidad:</p>
-      <ul>
-        <li>Sin historial: ~500–700 pacientes</li>
-        <li>Con historial de 5 entradas: ~200–300 pacientes</li>
-        <li>Con historial de 10 entradas: ~100–150 pacientes</li>
-      </ul>
-      <div class="box bw"><div class="bt">⚠️ Recomendación</div>Realiza backups JSON periódicos desde Exportar y Datos → Exportar, especialmente antes de limpiar el navegador o cambiar de dispositivo. Los datos en localStorage se pierden al borrar el historial del navegador.</div>
+      <p>IndexedDB no tiene el límite de ~5 MB propio de <code>localStorage</code>: el límite real depende del navegador y del espacio libre en disco, y habitualmente permite varios cientos de MB o más — suficiente para miles de pacientes con historial extenso y para los adjuntos clínicos (imágenes, PDFs).</p>
+
+      <div class="box bw"><div class="bt">⚠️ Recomendación</div>Realiza backups JSON periódicos desde Exportar y Datos → Exportar, especialmente antes de limpiar los datos del navegador o cambiar de dispositivo. Los adjuntos clínicos <strong>no</strong> se incluyen en el backup JSON (son archivos binarios) — para conservarlos, mantén el mismo navegador y dispositivo, o haz copias manuales de los archivos originales.</div>
 
       <h2>RGPD y datos clínicos</h2>
-      <p>Los archivos exportados (JSON, CSV, Excel) contienen datos clínicos de carácter personal. Su almacenamiento y transmisión deben cumplir con el <strong>Reglamento General de Protección de Datos (RGPD)</strong> y la normativa sanitaria aplicable. GineApp Pro no aplica cifrado adicional a los datos exportados — es responsabilidad del profesional protegerlos adecuadamente.</p>
+      <p>Los archivos exportados (JSON, CSV, Excel) contienen datos clínicos de carácter personal. Su almacenamiento y transmisión deben cumplir con el <strong>Reglamento General de Protección de Datos (RGPD)</strong> y la normativa sanitaria aplicable. GineApp Pro no aplica cifrado adicional a los datos exportados — es responsabilidad del profesional protegerlos adecuadamente. Para compartir datos con terceros (p. ej. para análisis estadístico), usa la exportación con <a href="#" onclick="nav('anonimizacion',null)">anonimización</a>.</p>
 
       <h2>Borrar todos los datos</h2>
       <p>En <strong>Exportar y Datos → Importar → 🗑️ Borrar todas las pacientes</strong>. La acción pide doble confirmación y es irreversible. Se recomienda exportar un backup antes.</p>
     </div>
 
+
+    <!-- SEGUIMIENTOS Y ESTADO ACTUAL -->
+    <div class="section" id="s-seguimientos">
+      <div class="page-title">Seguimientos y estado actual</div>
+      <div class="page-sub">Registro de visitas directamente desde el listado de pacientes, y cómo el último seguimiento pasa a ser el estado clínico "actual" de la paciente.</div>
+
+      <h2>Panel inline de seguimientos</h2>
+      <p>Junto a cada fila de la lista de <strong>Pacientes</strong>, el botón <strong>📈</strong> (con un badge que indica cuántos seguimientos tiene registrados) despliega un panel con el historial completo de esa paciente, sin salir de la lista ni abrir el modal. Desde ahí se puede:</p>
+      <ul>
+        <li><strong>Crear</strong> un nuevo seguimiento («+ Nueva revisión»)</li>
+        <li><strong>Editar</strong> cualquier entrada existente (✏️)</li>
+        <li><strong>Eliminar</strong> entradas individuales (🗑) o varias a la vez con selección múltiple</li>
+      </ul>
+
+      <h2>Fecha de Revisión vs. Fecha de registro</h2>
+      <p>Cada seguimiento distingue dos fechas:</p>
+      <table class="tbl">
+        <tr><th>Campo</th><th>Qué es</th><th>¿Editable?</th></tr>
+        <tr><td>Fecha de Revisión</td><td>La fecha clínica real de la visita</td><td>Sí, libremente — puedes registrar visitas retroactivas o corregir datos históricos</td></tr>
+        <tr><td>Fecha de registro</td><td>El momento en que el dato se introdujo en la app</td><td>No, es informativa y se fija automáticamente</td></tr>
+      </table>
+      <div class="box bi"><div class="bt">💡 Es un registro, no una auditoría</div>La app permite editar y crear historial en cualquier momento, con cualquier fecha, independientemente de la fecha del sistema. Es intencionado: refleja cómo funciona la práctica clínica real, donde a veces se completan datos de visitas pasadas.</div>
+
+      <h2>Trazabilidad</h2>
+      <p>Cada entrada del historial muestra una etiqueta según su origen:</p>
+      <ul>
+        <li><strong>✏️ Manual</strong> — creada a mano desde el panel de seguimientos</li>
+        <li><strong>✏️ Editado</strong> — era una entrada automática (generada al guardar un cambio en la ficha) y se ha corregido manualmente</li>
+        <li>Sin etiqueta — entrada automática sin modificar, generada al detectar un cambio clínico al guardar la ficha</li>
+      </ul>
+
+      <h2>"Estado actual" — el último seguimiento manda</h2>
+      <p>Cuando una paciente tiene seguimientos registrados, los siguientes lugares de la app muestran los valores del <strong>seguimiento más reciente</strong> (por Fecha de Revisión) en lugar de los campos originales de la ficha:</p>
+      <ul>
+        <li>El <strong>modal de paciente</strong> (síntomas, tratamiento, fertilidad)</li>
+        <li>La <strong>vista previa rápida</strong> (hover / long-press)</li>
+        <li>El <strong>🧭 decisor clínico contextual</strong> — las alertas se calculan sobre los datos más recientes</li>
+      </ul>
+      <p>Los campos afectados son: EVA (dismenorrea y pélvico), hemoglobina, AMH, tamaño de endometrioma/mioma, volumen uterino, tratamiento médico, cirugías, respuesta al tratamiento, estado de tratamiento, EFI, próxima revisión y EHP-5/EHP-30.</p>
+      <div class="box bw"><div class="bt">⚠️ La ficha base no cambia</div>El formulario de edición de la paciente (Datos/Síntomas/Diagnóstico/Tratamiento/Fertilidad) sigue mostrando y guardando siempre los campos originales tal cual se introdujeron. El diagnóstico (rASRM, FIGO, localización de lesiones, etc.) y los datos personales <strong>no</strong> se ven afectados por los seguimientos — solo los campos de evolución clínica listados arriba.</div>
+
+      <h2>En el informe clínico</h2>
+      <p>El <strong>Informe Clínico Completo</strong> sigue un modelo distinto, más parecido al de una historia clínica hospitalaria: muestra <strong>todos</strong> los datos, empezando por el registro basal (la ficha inicial) y añadiendo a continuación, en la sección "Historial de Seguimiento", cada visita registrada en orden cronológico. No sustituye la ficha base por el estado actual — las dos informaciones conviven en el documento para dar trazabilidad completa desde el ingreso hasta la última revisión.</p>
+    </div>
+
+    <!-- SECUENCIALIDAD DE TRATAMIENTO -->
+    <div class="section" id="s-secuencialidad">
+      <div class="page-title">Secuencialidad de tratamiento</div>
+      <div class="page-sub">Dos mecanismos complementarios para documentar y vigilar los cambios de tratamiento médico en endometriosis, siguiendo la jerarquía de líneas terapéuticas ESHRE 2022.</div>
+
+      <h2>Esquema A — Motivo de cambio de tratamiento</h2>
+      <p>En el <strong>Tab 3 — Tratamiento</strong> del formulario, el campo <strong>«Motivo de cambio de tratamiento»</strong> permite documentar por qué se modifica el tratamiento médico de una paciente: falta de eficacia, efectos secundarios, deseo gestacional, cirugía programada, preferencia de la paciente, contraindicación médica u otro (con detalle en texto libre).</p>
+      <p>Este motivo solo se guarda en el historial longitudinal <strong>si esa edición implica un cambio real</strong> en la lista de tratamiento médico (`txMed`) — si no ha cambiado el tratamiento, el motivo no se registra como snapshot, para no generar entradas de historial vacías de contenido clínico.</p>
+
+      <h2>Esquema B — Líneas terapéuticas y alerta de salto de línea</h2>
+      <p>ESHRE 2022 organiza el tratamiento del dolor en endometriosis en líneas jerárquicas:</p>
+      <table class="tbl">
+        <tr><th>Línea</th><th>Tratamientos incluidos</th></tr>
+        <tr><td>1ª línea</td><td>ACO combinados, progestágenos orales, DIU-LNG, implante etonogestrel, dienogest</td></tr>
+        <tr><td>2ª línea</td><td>Agonistas GnRH, Relugolix (antagonista), Linzagolix (antagonista)</td></tr>
+        <tr><td>Refractario</td><td>Inhibidores de aromatasa</td></tr>
+      </table>
+      <p>La app revisa automáticamente el tratamiento médico actual <strong>y todo el historial</strong> de la paciente para detectar si se ha saltado directamente a una línea superior sin constancia de haber pasado por las anteriores. Esto puede ocurrir legítimamente (tratamiento iniciado en otro centro, contraindicación, cirugía programada), así que la alerta no es bloqueante:</p>
+      <ul>
+        <li><strong>⚠️ Posible salto de línea terapéutica</strong> (caja naranja) — se ha detectado un salto sin motivo documentado. Aparece en tiempo real en el formulario (al seleccionar el tratamiento médico) y en el 🧭 decisor clínico contextual del modal.</li>
+        <li><strong>✅ Salto de línea documentado</strong> (caja verde) — el salto está justificado porque el motivo de cambio registrado es uno de los que lo explican clínicamente: contraindicación médica, efectos secundarios o cirugía programada.</li>
+      </ul>
+      <div class="box bi"><div class="bt">💡 Cómo resolver la alerta</div>Si el salto es legítimo pero no está en la lista de motivos que lo justifican automáticamente, basta con indicar el motivo en el campo «Motivo de cambio de tratamiento» del Tab 3 para dejar constancia clínica del porqué.</div>
+    </div>
+
+    <!-- ALTA DE PACIENTES -->
+    <div class="section" id="s-alta">
+      <div class="page-title">Alta de pacientes</div>
+      <div class="page-sub">Cómo marcar el fin de seguimiento de una paciente y qué cambia en la app cuando está de alta.</div>
+
+      <h2>Cómo marcar el alta</h2>
+      <p>Al crear o editar un seguimiento (panel 📈 en el listado, o desde el modal de paciente), aparece la opción <strong>«🏁 Esta revisión marca el alta de la paciente»</strong>. Al activarla, se despliega un campo para indicar la <strong>causa del alta</strong>:</p>
+      <ul>
+        <li>Resolución del problema</li>
+        <li>Traslado a otro centro</li>
+        <li>Éxitus</li>
+        <li>Otra (con campo de texto libre para especificar)</li>
+      </ul>
+      <div class="box bw"><div class="bt">⚠️ Marcar solo la revisión que cierra el seguimiento</div>Solo debe activarse en el seguimiento que realmente pone fin al seguimiento de la paciente. Si la paciente vuelve a tener seguimientos posteriores sin marcar como alta, la app ya no la considera "de alta" — el estado se calcula siempre a partir del seguimiento más reciente por fecha, lo que permite gestionar un reingreso simplemente añadiendo un nuevo seguimiento normal.</div>
+
+      <h2>Qué cambia cuando una paciente está de alta</h2>
+      <ul>
+        <li><strong>Modal de paciente:</strong> aparece una etiqueta <span class="tag" style="background:rgba(232,85,85,.15);color:var(--rd);border-color:rgba(232,85,85,.25)">🏁 Alta</span> junto al diagnóstico, y un aviso con la causa y fecha del alta.</li>
+        <li><strong>Alertas de revisión pendiente:</strong> se desactivan — no tiene sentido avisar de una revisión pendiente para una paciente cuyo seguimiento ya ha finalizado. Esto afecta al propio modal, al widget de "Revisiones próximas" del Dashboard, al badge de revisiones vencidas del sidebar y a la Agenda de Revisiones, que deja de listarla.</li>
+        <li><strong>Historial:</strong> la entrada marcada como alta se destaca en rojo en la línea de tiempo del modal, con la causa visible.</li>
+        <li><strong>Informe clínico completo:</strong> ver sección siguiente.</li>
+      </ul>
+
+      <h2>Informe de Alta</h2>
+      <p>Si el seguimiento más reciente de la paciente está marcado como alta, el <strong>Informe Clínico Completo</strong> generado desde Informes cambia automáticamente:</p>
+      <ul>
+        <li>El título pasa de «Informe Clínico» a <strong>«🏁 INFORME DE ALTA»</strong>, con la cabecera en rojo.</li>
+        <li>Se añade una línea con la <strong>causa</strong> y la <strong>fecha</strong> del alta justo debajo del título.</li>
+        <li>En la sección "Historial de Seguimiento", la visita de alta se destaca igual que en el modal, con su causa incluida.</li>
+      </ul>
+      <p>El resto del contenido del informe (datos personales, síntomas, diagnóstico, tratamiento, fertilidad e historial completo) se mantiene igual — el informe de alta no oculta ni resume nada, solo lo señala como tal.</p>
+    </div>
+
+    <!-- ANONIMIZACIÓN DE DATOS -->
+    <div class="section" id="s-anonimizacion">
+      <div class="page-title">Anonimización de datos</div>
+      <div class="page-sub">Exportación de datasets sin identificadores directos, para investigación o estadística, desde Exportar y Datos.</div>
+
+      <div class="box bw"><div class="bt">⚠️ Es pseudonimización, no anonimización estricta</div>El proceso conserva la <strong>fecha de nacimiento exacta</strong>, que combinada con un diagnóstico poco frecuente puede actuar como cuasi-identificador. El término "anonimizar" se usa en la interfaz por ser el más reconocible, pero desde un punto de vista técnico y legal es más preciso hablar de pseudonimización. Consulta con tu asesoría legal/DPO los requisitos aplicables antes de compartir estos datos fuera de tu organización.</div>
+
+      <h2>Cómo activarla</h2>
+      <p>En <strong>Exportar y Datos → Exportar Datos</strong>, tanto la tarjeta de exportación JSON como la de CSV/Excel tienen un checkbox <strong>🕶️ Anonimizar</strong>. Al marcarlo:</p>
+      <ul>
+        <li>El nombre de cada paciente se sustituye por un código estable con formato <code>ANON-XXXXXXXX</code>, generado a partir de su identificador interno.</li>
+        <li>Se eliminan del archivo: NHC, teléfono e identificador interno real.</li>
+        <li>Los campos de texto libre que podrían contener información identificativa (notas diagnósticas, observaciones, plan terapéutico, notas de visita, notas de seguimiento, localización de recurrencia, detalle de cirugías, medicación concomitante en texto libre) se sustituyen por <code>[oculto — anonimizado]</code>.</li>
+        <li>El resto de datos clínicos estructurados (diagnóstico, estadios, tratamientos en chips, analítica, EVA, EHP, etc.) se mantiene intacto, ya que es la base del análisis estadístico.</li>
+      </ul>
+
+      <h2>Clave de reasociación</h2>
+      <p>Al exportar de forma anonimizada, la app descarga <strong>automáticamente un segundo archivo</strong> (<code>gineco_CLAVE_REASOCIACION_[fecha].json</code>) con la relación entre cada código <code>ANON-XXXXXXXX</code> y la identidad real de la paciente (nombre, NHC, id interno).</p>
+      <div class="box br"><div class="bt">🚨 Archivo confidencial</div>Esta clave permite reidentificar a las pacientes del dataset anonimizado. Debe conservarse por separado del dataset anonimizado y no compartirse con quien vaya a analizar los datos.</div>
+      <p>El código <code>ANON-XXXXXXXX</code> de cada paciente es <strong>estable entre exportaciones</strong>: si vuelves a exportar de forma anonimizada más adelante, la misma paciente recibe el mismo código, lo que permite hacer seguimiento longitudinal en el dataset anonimizado sin necesidad de reidentificarla.</p>
+
+      <h2>Importación de datasets anonimizados</h2>
+      <p>Al importar un archivo JSON, la app detecta automáticamente si procede de una exportación anonimizada (campo <code>anonimizado: true</code> en el archivo) y ajusta su comportamiento:</p>
+      <ul>
+        <li>Nunca reutiliza los identificadores internos del archivo entrante, para evitar colisiones con pacientes ya existentes en tu base de datos.</li>
+        <li>La detección de duplicados (en el modo "Solo añadir nuevas") se hace comparando por <strong>código de anonimización</strong> en vez de por NHC, ya que un dataset anonimizado no contiene NHC.</li>
+      </ul>
+    </div>
 
     <!-- ADJUNTOS CLÍNICOS -->
     <div class="section" id="s-adjuntos">
@@ -1031,6 +1171,12 @@ kbd{
       </ul>
       <p>Cada bloque muestra el número de pacientes que contiene. Dentro de cada grupo, el selector <strong>«Fecha más próxima / más lejana primero»</strong> controla el orden.</p>
 
+      <h2>Reprogramar fecha sin abrir la ficha</h2>
+      <p>Cada fila incluye un selector de fecha y un botón 💾: cambia la fecha y pulsa el botón para reprogramar la próxima revisión de esa paciente al instante, sin necesidad de abrir el modal completo ni el formulario de edición.</p>
+
+      <h2>Pacientes de alta</h2>
+      <p>Las pacientes cuyo seguimiento más reciente está marcado como <a href="#" onclick="nav('alta',null)">🏁 Alta</a> no aparecen en esta agenda, ni en el widget del Dashboard, ni en el badge de revisiones vencidas — su seguimiento ha finalizado, así que no tiene sentido seguir avisando de una revisión pendiente.</p>
+
       <h2>Acceder a la paciente</h2>
       <p>Toca o haz clic en cualquier fila para abrir directamente el modal completo de esa paciente, igual que desde la lista de Pacientes.</p>
     </div>
@@ -1177,8 +1323,10 @@ const titles = {
   fertilidad:'Fertilidad', calculadoras:'Calculadoras',
   dashboard:'Dashboard', revisiones:'Agenda de Revisiones', filtros:'Filtros avanzados',
   informes:'Informes clínicos',
-  exportar:'Exportar e importar', atajos:'Atajos y gestos',
+  exportar:'Exportar y Datos', atajos:'Atajos y gestos',
   guias:'Guías clínicas', datos:'Datos y privacidad',
+  seguimientos:'Seguimientos y estado actual', secuencialidad:'Secuencialidad de tratamiento',
+  alta:'Alta de pacientes', anonimizacion:'Anonimización de datos',
   adjuntos:'Adjuntos clínicos', notas:'Notas de visita',
   enfermeria:'Valoración de enfermería',
   medconc:'Medicación concomitante', ehp30:'EHP-30 calidad de vida',
