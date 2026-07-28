@@ -5,7 +5,7 @@
 
 const CACHE_NAME = 'gineco-static-v2-3';
 const CACHE_LIBS = 'gineco-libs-v1'; // separado: las librerías casi nunca cambian de versión
-const BASE = '/gineapp/';
+const BASE = '/ginepro/';
 
 // Assets de la app (cambian con cada actualización)
 const PRECACHE_URLS = [
