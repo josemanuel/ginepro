@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GineApp Pro - Decisor Diagnóstico</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+        h1 { color: #d81b60; font-size: 1.5rem; }
+        .question { font-size: 1.2rem; margin-bottom: 20px; font-weight: bold; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 12px; border: 1px solid #d81b60; background: white; color: #d81b60; border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        button:hover { background: #d81b60; color: white; }
+        .result { background: #e1f5fe; border-left: 5px solid #0288d1; padding: 15px; margin-top: 20px; }
+        .alert { color: #b71c1c; font-weight: bold; font-size: 0.9rem; margin-top: 10px; }
+        .reset { margin-top: 20px; background: #eee; border: none; color: #333; padding: 8px; width: fit-content; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="app">
+    <h1>Algoritmo de Diagnóstico Diferencial</h1>
+    <div id="content">
+        <p class="question">¿Cuál es el motivo principal de consulta o síntoma predominante?</p>
+        <div class="options">
+            <button onclick="step('endo_triaje')">Dolor pélvico / Dismenorrea / Infertilidad</button>
+            <button onclick="step('mioma_triaje')">Sangrado Abundante (SUA) / Masa palpable / Compresión</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const steps = {
+        endo_triaje: {
+            q: "Realizar Ecografía Transvaginal (Eco TV) o RM. ¿Hay hallazgos compatibles (endometriomas, nódulos profundos o adenomiosis)?",
+            options: [
+                { text: "Sí, hallazgos positivos", next: "endo_confirmada" },
+                { text: "No, imagen negativa", next: "endo_negativa" }
+            ]
+        },
+        endo_confirmada: {
+            res: "Diagnóstico de Endometriosis Confirmado por Imagen. <br>Acción: Clasificar estadio rASRM (I-IV) y valorar si es Endometriosis Profunda.",
+            alert: "⚠️ Si hay afectación profunda (intestino, vejiga, uréter), derivar a centro de excelencia multidisciplinar.",
+            reset: true
+        },
+        endo_negativa: {
+            q: "La imagen negativa NO descarta la enfermedad. ¿Los síntomas persisten tras analgésicos básicos?",
+            options: [
+                { text: "Sí, persisten", next: "endo_empirico" },
+                { text: "No, síntomas controlados", next: "endo_seguimiento" }
+            ]
+        },
+        endo_empirico: {
+            q: "Iniciar tratamiento médico empírico (ACO o progestágenos). ¿Responde la paciente al tratamiento tras 3-6 meses?",
+            options: [
+                { text: "Sí responde", next: "endo_presuncion" },
+                { text: "No responde / Contraindicado", next: "endo_laparoscopia" }
+            ]
+        },
+        endo_presuncion: {
+            res: "Diagnóstico de Presunción de Endometriosis. Continuar tratamiento médico y seguimiento.",
+            alert: "🚫 No es necesaria la laparoscopia quirúrgica si hay respuesta clínica.",
+            reset: true
+        },
+        endo_laparoscopia: {
+            res: "Indicación de Laparoscopia Diagnóstica + Histología.",
+            alert: "Este es el último paso diagnóstico según ESHRE 2022 cuando la imagen es negativa y el tratamiento falla.",
+            reset: true
+        },
+        endo_seguimiento: {
+            res: "Manejo expectante y seguimiento clínico anual.",
+            reset: true
+        },
+        mioma_triaje: {
+            q: "Realizar Eco TV 2D. ¿Se confirman miomas uterinos?",
+            options: [
+                { text: "Sí, localizados", next: "mioma_clasificacion" },
+                { text: "Dudas o múltiples complejos", next: "mioma_rm" }
+            ]
+        },
+        mioma_clasificacion: {
+            q: "Identificar Tipo FIGO. ¿Es un mioma submucoso (FIGO 0, 1 o 2)?",
+            options: [
+                { text: "Sí, es submucoso", next: "mioma_stepw" },
+                { text: "No, es intramural o subseroso (FIGO 3-8)", next: "mioma_medico" }
+            ]
+        },
+        mioma_rm: {
+            res: "Realizar RM Pélvica para planificación quirúrgica o descartar compromiso de órganos vecinos.",
+            next_step_text: "Continuar a clasificación",
+            next: "mioma_clasificacion"
+        },
+        mioma_stepw: {
+            res: "Aplicar Escala STEPW para valorar complejidad de Miomectomía Histeroscópica.",
+            alert: "Score 0-4: 1 tiempo quirúrgico. Score ≥7: Considerar 2 tiempos o reducción previa con antagonistas GnRH.",
+            reset: true
+        },
+        mioma_medico: {
+            res: "Tratamiento médico (Antagonistas GnRH o DIU-LNG si no hay distorsión).",
+            alert: "En postmenopáusicas con crecimiento rápido, descartar sarcoma.",
+            reset: true
+        }
+    };
+
+    function step(id) {
+        const s = steps[id];
+        const container = document.getElementById('content');
+        
+        if (s.res) {
+            let html = `<div class="result">${s.res}</div>`;
+            if (s.alert) html += `<p class="alert">${s.alert}</p>`;
+            if (s.next) html += `<button onclick="step('${s.next}')">${s.next_step_text || 'Siguiente'}</button>`;
+            if (s.reset) html += `<button class="reset" onclick="location.reload()">Empezar de nuevo</button>`;
+            container.innerHTML = html;
+        } else {
+            let html = `<p class="question">${s.q}</p><div class="options">`;
+            s.options.forEach(opt => {
+                html += `<button onclick="step('${opt.next}')">${opt.text}</button>`;
+            });
+            html += `</div><button class="reset" onclick="location.reload()">Atrás</button>`;
+            container.innerHTML = html;
+        }
+    }
+</script>
+</body>
+</html>
