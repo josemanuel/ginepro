@@ -304,6 +304,7 @@ button,a{touch-action:manipulation}
     <button class="nb" onclick="go('pacientes',this)"><span class="ico">👩</span>Pacientes<span class="bdg" id="bdgP">0</span></button>
     <button class="nb" onclick="go('revisiones',this)"><span class="ico">📅</span>Agenda de Revisiones<span class="bdg" id="bdgRev" style="display:none;background:var(--rd)">0</span></button>
     <button class="nb" onclick="go('nueva',this)"><span class="ico">➕</span>Nueva Paciente</button>
+    <button class="nb" onclick="go('cribado',this)"><span class="ico">🧭</span>Cribado Diagnóstico</button>
     <button class="nb" onclick="go('informes',this)"><span class="ico">📄</span>Informes</button>
     <button class="nb" onclick="go('export',this)"><span class="ico">📤</span>Exportar y Datos</button>
     <div class="nlbl">Herramientas</div>
@@ -836,6 +837,20 @@ button,a{touch-action:manipulation}
       <button class="btn bg bsm" onclick="clr()">🗑 Limpiar</button>
       <div class="flex g2u"><button class="btn bs bsm" onclick="go('pacientes',null)">Cancelar</button><button class="btn bp" onclick="savePt()">💾 Guardar</button></div>
     </div>
+  </div>
+</div>
+<!-- CRIBADO DIAGNÓSTICO (RC2) -->
+<div id="s-cribado" class="sec">
+  <div class="card mb3">
+    <div class="chd">
+      <div><div class="ct">🧭 Cribado Diagnóstico</div><div class="cs">Árbol de decisión — ESHRE 2022 (Endometriosis) · SEGO 2025 (Miomas) · Guía Asturias 2025. Punto de entrada antes del registro clínico completo.</div></div>
+      <span class="tag tpu" id="cribStepBadge">Paso 1 / 3</span>
+    </div>
+    <div id="cribBody"></div>
+  </div>
+  <div class="card">
+    <div class="chd"><div><div class="ct">📋 Cribados guardados</div><div class="cs">Pacientes evaluadas mediante el árbol diagnóstico — incluidas o no en el registro completo</div></div></div>
+    <div id="cribList"></div>
   </div>
 </div>
 <!-- ALGORITMOS -->
@@ -1517,6 +1532,7 @@ button,a{touch-action:manipulation}
 <!-- MORE MENU -->
 <div id="moreMenu" style="display:none;position:fixed;bottom:60px;right:0;left:0;z-index:140;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 0;box-shadow:0 -4px 20px rgba(0,0,0,.2)">
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+    <button class="bi" style="padding:12px 4px" onclick="moreGo('cribado')"><span class="ic" style="font-size:17px">🧭</span>Cribado</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('revisiones')"><span class="ic" style="font-size:17px">📅</span>Agenda</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('tratamiento')"><span class="ic" style="font-size:17px">💊</span>Tratamiento</button>
     <button class="bi" style="padding:12px 4px" onclick="moreGo('fertilidad')"><span class="ic" style="font-size:17px">🌱</span>Fertilidad</button>
@@ -1583,8 +1599,8 @@ button,a{touch-action:manipulation}
 // IDB — CAPA DE PERSISTENCIA IndexedDB
 // ═══════════════════════════════════════════════
 const idb=(()=>{
-  const DB_NAME='GinecoAppPro',DB_VER=1;
-  const STORE='pacientes',ADJ='adjuntos';
+  const DB_NAME='GinecoAppPro',DB_VER=2;
+  const STORE='pacientes',ADJ='adjuntos',CRIB='cribados';
   let _db=null;
 
   function _tx(stores,mode,fn){
@@ -1608,6 +1624,8 @@ const idb=(()=>{
           const s=db.createObjectStore(ADJ,{keyPath:'id'});
           s.createIndex('pacienteId','pacienteId',{unique:false});
         }
+        if(!db.objectStoreNames.contains(CRIB))
+          db.createObjectStore(CRIB,{keyPath:'id'});
       };
       req.onsuccess=e=>{_db=e.target.result;res(_db);};
       req.onerror=e=>rej(e.target.error);
@@ -1681,8 +1699,23 @@ const idb=(()=>{
     });
   }
 
+  // ── Cribados diagnósticos (RC2) ──
+  async function getAllCribados(){
+    await open();
+    return _tx(CRIB,'readonly',tx=>_req(tx.objectStore(CRIB).getAll()));
+  }
+  async function putCribado(obj){
+    await open();
+    return _tx(CRIB,'readwrite',tx=>_req(tx.objectStore(CRIB).put(obj)));
+  }
+  async function delCribado(id){
+    await open();
+    return _tx(CRIB,'readwrite',tx=>_req(tx.objectStore(CRIB).delete(id)));
+  }
+
   return{open,getAll,put,del,putMany,clearStore,
-         getAdjuntos,putAdjunto,delAdjunto,clearAdjuntosByPaciente};
+         getAdjuntos,putAdjunto,delAdjunto,clearAdjuntosByPaciente,
+         getAllCribados,putCribado,delCribado};
 })();
 
 // ═══════════════════════════════════════════════
@@ -1822,6 +1855,7 @@ function renderSavedFiltersBar(){
 // NAV
 // ═══════════════════════════════════════════════
 const ttls={dashboard:'Dashboard',pacientes:'Pacientes',revisiones:'Agenda de Revisiones',nueva:'Nueva Paciente',
+  cribado:'Cribado Diagnóstico',
   algoritmos:'Algoritmos Dx',tratamiento:'Tratamiento',fertilidad:'Fertilidad',
   scores:'Escalas & Scores',guias:'Guías 2025',informes:'Informes',export:'Exportar y Datos'};
 
@@ -1839,7 +1873,11 @@ function go(id,btn){
   if(id==='informes'){fRS();}
   if(id==='export'){setTimeout(initExpTab,50);}
   if(id==='nueva'&&!eId)clr();
+  if(id==='cribado')cribShow();
   window.scrollTo(0,0);
+}
+function navBtn(id){
+  return [...document.querySelectorAll('.nb')].find(b=>(b.getAttribute('onclick')||'').includes("go('"+id+"'"));
 }
 function bnv(id,n){
   go(id,null);
@@ -2606,7 +2644,7 @@ function rPL(){
       </div>
     </div>
     <div class="seg-inline" id="seg-${p.id}" style="display:none"></div>`;
-  }).join('')+`<button class="btn bp wf mt3" style="justify-content:center" onclick="go('nueva',null)">+ Agregar paciente</button>`;
+  }).join('')+`<div class="flex g2u mt3"><button class="btn bp" style="flex:1;justify-content:center" onclick="go('nueva',null)">+ Agregar paciente</button><button class="btn bs" style="flex:1;justify-content:center" onclick="go('cribado',navBtn('cribado'))">🧭 Cribado diagnóstico</button></div>`;
 }
 function eById(id){const p=DB.find(x=>x.id===id);if(!p)return;fillF(p);go('nueva',document.querySelectorAll('.nb')[2]);}
 
@@ -5868,6 +5906,364 @@ document.addEventListener('DOMContentLoaded',async()=>{
     });
   }
 });
+
+// ═══════════════════════════════════════════════
+// CRIBADO DIAGNÓSTICO — ÁRBOL DE DECISIÓN (RC2)
+// Basado en ESHRE 2022 (endometriosis), SEGO 2025 (miomas)
+// y Guía Asturias 2025 (síntomas extragenitales).
+// Punto de entrada previo al registro clínico completo.
+// ═══════════════════════════════════════════════
+let CRIB={step:1,nombre:'',fechaNac:'',motivo:'',sintEndo:[],sintMioma:[],deseoGest:'no',
+  endoCandidate:false,miomaCandidate:false,endoImg:'',endoEmp:'',endoResp:'',
+  miomaEco:'',figo:'',sarcoma:'no',resultado:null};
+
+function cribShow(){
+  cribRenderStep();
+  renderCribList();
+}
+
+function cribReset(){
+  CRIB={step:1,nombre:'',fechaNac:'',motivo:'',sintEndo:[],sintMioma:[],deseoGest:'no',
+    endoCandidate:false,miomaCandidate:false,endoImg:'',endoEmp:'',endoResp:'',
+    miomaEco:'',figo:'',sarcoma:'no',resultado:null};
+  cribRenderStep();
+  window.scrollTo(0,0);
+}
+
+function cribToStep(n){
+  cribHarvestCurrentStep();
+  if(CRIB.step===1&&n>1&&!CRIB.nombre){tst('Indica el nombre de la paciente','er');return;}
+  CRIB.step=n;
+  cribRenderStep();
+  window.scrollTo(0,0);
+}
+
+function cribHarvestCurrentStep(){
+  if(CRIB.step===1){
+    const n=document.getElementById('cribN');if(n)CRIB.nombre=n.value.trim();
+    const f=document.getElementById('cribFN');if(f)CRIB.fechaNac=f.value;
+    const m=document.getElementById('cribMotivo');if(m)CRIB.motivo=m.value.trim();
+  } else if(CRIB.step===2){
+    CRIB.sintEndo=gC('cribSxEndo');
+    CRIB.sintMioma=gC('cribSxMioma');
+    const dg=document.getElementById('cribDeseo');if(dg)CRIB.deseoGest=dg.value;
+    CRIB.endoCandidate=CRIB.sintEndo.length>0;
+    CRIB.miomaCandidate=CRIB.sintMioma.length>0;
+  } else if(CRIB.step===3){
+    const ei=document.getElementById('cribEndoImg');if(ei)CRIB.endoImg=ei.value;
+    const ee=document.getElementById('cribEndoEmp');if(ee)CRIB.endoEmp=ee.value;
+    const er=document.getElementById('cribEndoResp');if(er)CRIB.endoResp=er.value;
+    const me=document.getElementById('cribMiomaEco');if(me)CRIB.miomaEco=me.value;
+    const fg=document.getElementById('cribFigo');if(fg)CRIB.figo=fg.value;
+    const sc=document.getElementById('cribSarcoma');if(sc)CRIB.sarcoma=sc.value;
+  }
+}
+
+function cribRenderStep(){
+  const body=document.getElementById('cribBody');
+  if(!body)return;
+  if(CRIB.step===4){cribComputeResult();return;}
+  const badge=document.getElementById('cribStepBadge');if(badge)badge.textContent='Paso '+CRIB.step+' / 3';
+  if(CRIB.step===1)body.innerHTML=cribHtmlStep1();
+  else if(CRIB.step===2)body.innerHTML=cribHtmlStep2();
+  else if(CRIB.step===3)body.innerHTML=cribHtmlStep3();
+  cribRestoreStepValues();
+}
+
+function cribRestoreStepValues(){
+  if(CRIB.step===1){
+    const n=document.getElementById('cribN');if(n)n.value=CRIB.nombre||'';
+    const f=document.getElementById('cribFN');if(f)f.value=CRIB.fechaNac||'';
+    const m=document.getElementById('cribMotivo');if(m)m.value=CRIB.motivo||'';
+  } else if(CRIB.step===2){
+    sC('cribSxEndo',CRIB.sintEndo);
+    sC('cribSxMioma',CRIB.sintMioma);
+    const dg=document.getElementById('cribDeseo');if(dg)dg.value=CRIB.deseoGest||'no';
+  } else if(CRIB.step===3){
+    const ei=document.getElementById('cribEndoImg');if(ei){ei.value=CRIB.endoImg||'';cribToggleEndoDetail();}
+    const ee=document.getElementById('cribEndoEmp');if(ee){ee.value=CRIB.endoEmp||'';cribToggleEndoResp();}
+    const er=document.getElementById('cribEndoResp');if(er)er.value=CRIB.endoResp||'';
+    const me=document.getElementById('cribMiomaEco');if(me){me.value=CRIB.miomaEco||'';cribToggleMiomaDetail();}
+    const fg=document.getElementById('cribFigo');if(fg)fg.value=CRIB.figo||'';
+    const sc=document.getElementById('cribSarcoma');if(sc)sc.value=CRIB.sarcoma||'no';
+  }
+}
+
+// ── Paso 1: filiación básica y motivo de consulta ──
+function cribHtmlStep1(){
+  return `<div class="box bi2 mb3"><div class="bt">🧭 Cribado diagnóstico — antes del registro completo</div>Recoge primero unos datos básicos de filiación. El árbol de decisión orientará si la paciente cumple criterios de inclusión (sospecha o confirmación de endometriosis y/o miomas) para continuar con el registro clínico completo. Si no los cumple, solo se guardarán estos datos básicos.</div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Nombre completo *</label><input class="fc" id="cribN" placeholder="Apellidos, Nombre"></div>
+    <div class="fg"><label class="fl">Fecha de nacimiento</label><input type="date" class="fc" id="cribFN"></div>
+  </div>
+  <div class="fg"><label class="fl">Motivo de consulta</label><textarea class="fc" id="cribMotivo" placeholder="Ej: dolor pélvico de 2 años de evolución, derivada por su MAP..."></textarea></div>
+  <div class="flex jcb mt3"><div></div><button class="btn bp" onclick="cribToStep(2)">Siguiente →</button></div>`;
+}
+
+// ── Paso 2: triaje sintomático (ESHRE Rec.1 GPP + síntomas de miomas SEGO) ──
+function cribHtmlStep2(){
+  const endoChips=['Dismenorrea','Dispareunia profunda','Disuria','Disquecia','Sangrado rectal doloroso','Hematuria cíclica','Dolor de hombro','Neumotórax catamenial','Hemoptisis catamenial','Dolor pleural catamenial','Disnea catamenial','Dolor sobre cicatriz quirúrgica','Infertilidad','Fatiga crónica','Sangrado uterino abundante','Dolor pélvico crónico','Compresión urinaria','Urgencia miccional'];
+  const miomaChips=['SUA (sangrado abundante)','Compresión vesical','Compresión ureteral','Dolor pélvico','Estreñimiento','Anemia','Pérdida gestacional'];
+  return `<div class="box bw mb3"><div class="bt">⚠️ Triaje ESHRE 2022 (Rec.1 GPP) + Guía Asturias 2025</div>Selecciona los síntomas y signos presentes. Es habitual que coexistan síntomas de ambas patologías; los extragenitales (hemoptisis, dolor pleural o disnea catamenial, dolor sobre cicatriz) son formas de presentación reconocidas por la guía asturiana.</div>
+  <div class="g2">
+    <div>
+      <div class="f6 sm mb2" style="color:var(--pk)">🔬 Sugestivos de Endometriosis</div>
+      <div class="chips" id="cribSxEndo">${endoChips.map(c=>`<div class="chip" onclick="ck(this)">${c}</div>`).join('')}</div>
+    </div>
+    <div>
+      <div class="f6 sm mb2" style="color:var(--or)">🔵 Sugestivos de Miomas</div>
+      <div class="chips" id="cribSxMioma">${miomaChips.map(c=>`<div class="chip" onclick="ck(this)">${c}</div>`).join('')}</div>
+    </div>
+  </div>
+  <div class="fg mt3"><label class="fl">Deseo gestacional</label><select class="fc" id="cribDeseo" style="max-width:220px"><option value="no">No desea</option><option value="si">Sí, inmediato</option><option value="futuro">Sí, futuro</option></select></div>
+  <div class="flex jcb mt3"><button class="btn bs" onclick="cribToStep(1)">← Atrás</button><button class="btn bp" onclick="cribToStep(3)">Siguiente →</button></div>`;
+}
+
+// ── Paso 3: profundización por vía clínica (imagen / tratamiento empírico / FIGO) ──
+function cribHtmlStep3(){
+  let h='<div class="box bi2 mb3"><div class="bt">🧭 Segunda fase</div>Responde solo las secciones correspondientes a los síntomas detectados en el paso anterior.</div>';
+  if(CRIB.endoCandidate){
+    h+=`<div class="mb4">
+      <div class="f6 sm mb2" style="color:var(--pk)">🔬 Vía Endometriosis (ESHRE 2022)</div>
+      <div class="fg"><label class="fl">¿Ecografía TV o RM pélvica realizada?</label>
+        <select class="fc" id="cribEndoImg" onchange="cribToggleEndoDetail()">
+          <option value="">—</option>
+          <option value="no">No realizada</option>
+          <option value="neg">Realizada — Negativa</option>
+          <option value="endometrioma">Realizada — Positiva: endometrioma</option>
+          <option value="profunda">Realizada — Positiva: nódulos de endometriosis profunda</option>
+        </select>
+      </div>
+      <div id="cribEndoEmpWrap" style="display:none">
+        <div class="fg"><label class="fl">¿Tratamiento empírico (ACO / progestágenos) iniciado?</label>
+          <select class="fc" id="cribEndoEmp" onchange="cribToggleEndoResp()">
+            <option value="">—</option><option value="no">No iniciado todavía</option><option value="si">Sí, iniciado</option>
+          </select>
+        </div>
+        <div class="fg" id="cribEndoRespWrap" style="display:none"><label class="fl">Respuesta al tratamiento empírico</label>
+          <select class="fc" id="cribEndoResp"><option value="">—</option><option value="responde">Responde (mejoría sintomática)</option><option value="noresponde">No responde / contraindicado</option></select>
+        </div>
+      </div>
+    </div>`;
+  }
+  if(CRIB.miomaCandidate){
+    h+=`<div class="mb4">
+      <div class="f6 sm mb2" style="color:var(--or)">🔵 Vía Miomas (SEGO 2025)</div>
+      <div class="fg"><label class="fl">¿Ecografía TV 2D confirma miomas?</label>
+        <select class="fc" id="cribMiomaEco" onchange="cribToggleMiomaDetail()">
+          <option value="">—</option>
+          <option value="no">No / hallazgos complejos o dudosos</option>
+          <option value="si">Sí, confirmados</option>
+        </select>
+      </div>
+      <div id="cribMiomaDetailWrap" style="display:none">
+        <div class="fr2">
+          <div class="fg"><label class="fl">Tipo FIGO (si conocido)</label><select class="fc" id="cribFigo">
+            <option value="">—</option><option value="0">0 – Submucoso pediculado</option><option value="1">1 – Sub &lt;50% intra.</option><option value="2">2 – Sub ≥50% intra.</option><option value="3">3 – Intramural (contacta end.)</option><option value="4">4 – Intramural puro</option><option value="5">5 – Subseroso ≥50%</option><option value="6">6 – Subseroso &lt;50%</option><option value="7">7 – Subseroso pediculado</option><option value="8">8 – Otros</option>
+          </select></div>
+          <div class="fg"><label class="fl">¿Postmenopáusica con crecimiento rápido? (&gt;25% volumen/6 meses)</label><select class="fc" id="cribSarcoma"><option value="no">No</option><option value="si">Sí</option></select></div>
+        </div>
+      </div>
+    </div>`;
+  }
+  if(!CRIB.endoCandidate&&!CRIB.miomaCandidate){
+    h+=`<div class="box bw mb3"><div class="bt">Sin síntomas seleccionados</div>No se marcó ningún síntoma sugestivo en el paso anterior. Puedes volver atrás para revisarlo o continuar para registrar el cribado sin inclusión.</div>`;
+  }
+  h+=`<div class="flex jcb mt3"><button class="btn bs" onclick="cribToStep(2)">← Atrás</button><button class="btn bp" onclick="cribToStep(4)">Ver resultado →</button></div>`;
+  return h;
+}
+
+function cribToggleEndoDetail(){
+  const v=(document.getElementById('cribEndoImg')||{}).value;
+  const wrap=document.getElementById('cribEndoEmpWrap');
+  if(!wrap)return;
+  wrap.style.display=(v==='no'||v==='neg')?'block':'none';
+}
+function cribToggleEndoResp(){
+  const v=(document.getElementById('cribEndoEmp')||{}).value;
+  const wrap=document.getElementById('cribEndoRespWrap');
+  if(!wrap)return;
+  wrap.style.display=(v==='si')?'block':'none';
+}
+function cribToggleMiomaDetail(){
+  const v=(document.getElementById('cribMiomaEco')||{}).value;
+  const wrap=document.getElementById('cribMiomaDetailWrap');
+  if(!wrap)return;
+  wrap.style.display=(v==='si')?'block':'none';
+}
+
+// ── Motor de decisión: calcula el resultado a partir del estado CRIB ──
+function cribComputeResult(){
+  const r={endo:{},mioma:{},alerts:[],incluir:false,dxSugerido:'sin-criterios'};
+  if(CRIB.endoCandidate){
+    if(CRIB.endoImg==='endometrioma'||CRIB.endoImg==='profunda'){
+      r.endo.estado='Diagnóstico presuntivo por imagen';
+      r.endo.detalle='Hallazgo compatible con endometriosis en Eco-TV/RM. La imagen (endometrioma o nódulos profundos) permite un diagnóstico presuntivo sin necesidad de confirmación quirúrgica inmediata (ESHRE 2022, Rec.5).';
+      r.incluir=true;
+      if(CRIB.endoImg==='profunda'){
+        r.alerts.push({tipo:'br',texto:'🏥 Sospecha de endometriosis profunda: se recomienda derivación a centro de excelencia (ESHRE 2022, Rec.30).'});
+      }
+    } else if(CRIB.endoEmp==='si'&&CRIB.endoResp==='responde'){
+      r.endo.estado='Presunción diagnóstica (respuesta a tratamiento empírico)';
+      r.endo.detalle='La respuesta al tratamiento empírico con ACO/progestágenos apoya el diagnóstico de presunción de endometriosis (ESHRE 2022, Rec.6).';
+      r.incluir=true;
+    } else if(CRIB.endoEmp==='si'&&CRIB.endoResp==='noresponde'){
+      r.endo.estado='Indicación de laparoscopia diagnóstica';
+      r.endo.detalle='Imagen negativa/no realizada y fracaso o contraindicación del tratamiento empírico: considerar laparoscopia diagnóstica y terapéutica (ESHRE 2022, Rec.6–7).';
+      r.incluir=true;
+    } else {
+      r.endo.estado='Iniciar tratamiento empírico';
+      r.endo.detalle='Imagen negativa o no realizada. ESHRE 2022 (Rec.6) recomienda iniciar tratamiento empírico con ACO o progestágenos, sin necesidad de laparoscopia previa.';
+      r.incluir=true;
+    }
+  }
+  if(CRIB.miomaCandidate){
+    if(CRIB.miomaEco==='si'){
+      r.mioma.estado='Miomas confirmados por ecografía';
+      r.mioma.detalle='Clasificación FIGO obligatoria (SEGO 2025).'+(CRIB.figo!==''?' Tipo FIGO indicado: '+CRIB.figo+'.':' Pendiente de completar la clasificación FIGO en el formulario.');
+      r.incluir=true;
+      if(CRIB.figo!==''&&parseInt(CRIB.figo)<=2){
+        r.alerts.push({tipo:'bo',texto:'📐 Mioma submucoso (FIGO 0–2): calcular la escala STEP-W antes de valorar miomectomía histeroscópica.'});
+      }
+    } else if(CRIB.miomaEco==='no'){
+      r.mioma.estado='Hallazgos complejos o dudosos';
+      r.mioma.detalle='Se recomienda ampliar el estudio con RM pélvica para planificación diagnóstica y/o quirúrgica (SEGO 2025).';
+      r.incluir=true;
+    } else {
+      r.mioma.estado='Pendiente de confirmación ecográfica';
+      r.mioma.detalle='Completa el resultado de la ecografía TV para orientar el siguiente paso.';
+    }
+    if(CRIB.sarcoma==='si'){
+      r.alerts.push({tipo:'br',texto:'⚠️ Postmenopáusica con crecimiento rápido de la masa (&gt;25% de volumen en 6 meses): descartar sarcoma mediante biopsia o cirugía (SEGO 2025).'});
+    }
+  }
+  if(CRIB.endoCandidate){
+    r.alerts.push({tipo:'bw',texto:'🚫 Recuerda: no se recomienda el uso de CA-125 para el diagnóstico de endometriosis (ESHRE 2022 — evidencia fuerte).'});
+  }
+  if(CRIB.endoCandidate&&CRIB.miomaCandidate)r.dxSugerido='ambas';
+  else if(CRIB.endoCandidate)r.dxSugerido='endometriosis';
+  else if(CRIB.miomaCandidate)r.dxSugerido='miomas';
+  else{r.dxSugerido='sin-criterios';r.incluir=false;}
+  CRIB.resultado=r;
+  cribRenderResultHtml();
+}
+
+function cribRenderResultHtml(){
+  const r=CRIB.resultado;
+  const body=document.getElementById('cribBody');
+  const badge=document.getElementById('cribStepBadge');if(badge)badge.textContent='Resultado';
+  const dxLabel={endometriosis:'Sospecha de Endometriosis',miomas:'Sospecha de Miomas',ambas:'Sospecha de Endometriosis + Miomas','sin-criterios':'Sin criterios claros de inclusión'}[r.dxSugerido]||'';
+  let html=`<div class="box ${r.incluir?'bo':'bw'} mb3"><div class="bt">${r.incluir?'✅':'⚠️'} ${dxLabel}</div>${r.incluir?'Esta paciente cumple criterios para continuar con el registro clínico completo.':'No se han identificado síntomas suficientes para orientar hacia endometriosis o miomas con este árbol. Puedes guardar el cribado sin incluir a la paciente, o iniciar igualmente el registro completo si el criterio clínico lo justifica.'}</div>`;
+  if(r.endo.estado)html+=`<div class="mb3"><div class="f6 sm mb1" style="color:var(--pk)">🔬 Vía Endometriosis</div><div class="sm c2"><strong>${r.endo.estado}</strong><br>${r.endo.detalle}</div></div>`;
+  if(r.mioma.estado)html+=`<div class="mb3"><div class="f6 sm mb1" style="color:var(--or)">🔵 Vía Miomas</div><div class="sm c2"><strong>${r.mioma.estado}</strong><br>${r.mioma.detalle}</div></div>`;
+  (r.alerts||[]).forEach(a=>{html+=`<div class="box ${a.tipo} mb2"><div class="sm">${a.texto}</div></div>`;});
+  html+=`<hr class="div"><div class="flex g2u wrap jcb">
+    <button class="btn bg bsm" onclick="cribToStep(3)">← Revisar respuestas</button>
+    <div class="flex g2u wrap">
+      <button class="btn bs bsm" onclick="cribReset()">🔄 Nuevo cribado</button>
+      <button class="btn bs bsm" onclick="cribSaveRecord(${r.incluir?'true':'false'})">💾 Guardar cribado</button>
+      ${r.incluir?`<button class="btn bp bsm" onclick="cribGoToPatient()">📋 Continuar a registro completo →</button>`:''}
+    </div>
+  </div>`;
+  if(body)body.innerHTML=html;
+}
+
+// ── Persistencia (IndexedDB, store 'cribados') ──
+async function cribSaveRecord(incluida){
+  const rec={
+    id:'crib_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    nombre:CRIB.nombre,fechaNac:CRIB.fechaNac,motivo:CRIB.motivo,
+    fecha:new Date().toISOString(),
+    sintEndo:[...CRIB.sintEndo],sintMioma:[...CRIB.sintMioma],deseoGest:CRIB.deseoGest,
+    endoImg:CRIB.endoImg,endoEmp:CRIB.endoEmp,endoResp:CRIB.endoResp,
+    miomaEco:CRIB.miomaEco,figo:CRIB.figo,sarcoma:CRIB.sarcoma,
+    dxSugerido:CRIB.resultado?CRIB.resultado.dxSugerido:'',incluida:!!incluida
+  };
+  try{await idb.putCribado(rec);}catch(e){console.error('IDB cribado error:',e);}
+  tst(incluida?'Cribado guardado ✓':'Cribado guardado sin inclusión','ok');
+  renderCribList();
+  return rec;
+}
+
+async function renderCribList(){
+  const el=document.getElementById('cribList');
+  if(!el)return;
+  let list=[];
+  try{list=await idb.getAllCribados();}catch(e){console.error(e);}
+  list.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  if(!list.length){el.innerHTML='<div class="xs c3" style="padding:8px 0;text-align:center">Sin cribados guardados todavía.</div>';return;}
+  el.innerHTML=list.map(c=>{
+    const d=new Date(c.fecha).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
+    const dxLbl={endometriosis:'Endometriosis',miomas:'Miomas',ambas:'Endo+Miomas','sin-criterios':'Sin criterios'}[c.dxSugerido]||'—';
+    const dxCls={endometriosis:'tp',miomas:'to',ambas:'tpu','sin-criterios':'tgr'}[c.dxSugerido]||'tgr';
+    return `<div class="pr">
+      <div class="pi" onclick="cribLoadRecord('${c.id}')">
+        <div class="pn">${c.nombre||'(sin nombre)'}</div>
+        <div class="pm">${d} · <span class="tag ${dxCls}" style="font-size:9.5px">${dxLbl}</span> ${c.incluida?'<span class="tag tg" style="font-size:9.5px">Incluida</span>':'<span class="tag tgr" style="font-size:9.5px">No incluida</span>'}</div>
+      </div>
+      <div class="pac vis">
+        <button class="btn bs bsm bic" onclick="event.stopPropagation();cribLoadRecord('${c.id}')" title="Revisar">👁</button>
+        <button class="btn bs bsm bic" style="color:var(--rd)" onclick="event.stopPropagation();cribDeleteRecord('${c.id}')" title="Eliminar">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function cribLoadRecord(id){
+  let list=[];try{list=await idb.getAllCribados();}catch(e){console.error(e);}
+  const c=list.find(x=>x.id===id);
+  if(!c)return;
+  CRIB.nombre=c.nombre||'';CRIB.fechaNac=c.fechaNac||'';CRIB.motivo=c.motivo||'';
+  CRIB.sintEndo=[...(c.sintEndo||[])];CRIB.sintMioma=[...(c.sintMioma||[])];CRIB.deseoGest=c.deseoGest||'no';
+  CRIB.endoCandidate=CRIB.sintEndo.length>0;CRIB.miomaCandidate=CRIB.sintMioma.length>0;
+  CRIB.endoImg=c.endoImg||'';CRIB.endoEmp=c.endoEmp||'';CRIB.endoResp=c.endoResp||'';
+  CRIB.miomaEco=c.miomaEco||'';CRIB.figo=c.figo||'';CRIB.sarcoma=c.sarcoma||'no';
+  CRIB.step=4;
+  cribRenderStep();
+  window.scrollTo(0,0);
+}
+
+async function cribDeleteRecord(id){
+  if(!confirm('¿Eliminar este cribado? No se puede deshacer.'))return;
+  try{await idb.delCribado(id);}catch(e){console.error(e);}
+  renderCribList();
+  tst('Cribado eliminado','er');
+}
+
+// ── Traslado al registro completo de paciente (formulario Nueva Paciente) ──
+async function cribGoToPatient(){
+  await cribSaveRecord(true);
+  go('nueva',navBtn('nueva')); // limpia el formulario internamente (clr()) antes de rellenarlo
+  const n=document.getElementById('fN');if(n)n.value=CRIB.nombre;
+  const fn=document.getElementById('fFN');if(fn&&CRIB.fechaNac)fn.value=CRIB.fechaNac;
+  sC('cSx',CRIB.sintEndo);
+  sC('cSM',CRIB.sintMioma);
+  const dg=document.getElementById('fDG');if(dg)dg.value=CRIB.deseoGest||'no';
+  const dxSel=document.getElementById('fDx');
+  if(dxSel){
+    if(CRIB.resultado.dxSugerido==='ambas')dxSel.value='ambas';
+    else if(CRIB.resultado.dxSugerido==='endometriosis'){
+      dxSel.value=(CRIB.endoImg==='endometrioma'||CRIB.endoImg==='profunda'||CRIB.endoResp==='responde')?'endometriosis':'sospecha';
+    } else if(CRIB.resultado.dxSugerido==='miomas')dxSel.value='miomas';
+    udF();
+  }
+  const md=document.getElementById('fMD');
+  if(md){
+    if(CRIB.endoImg==='endometrioma'||CRIB.endoImg==='profunda')md.value='Ecografía TV';
+    else if(CRIB.endoResp==='responde')md.value='Diagnóstico empírico';
+  }
+  if(CRIB.figo!==''){const fg=document.getElementById('fFG');if(fg)fg.value=CRIB.figo;}
+  const ndx=document.getElementById('fNDx');
+  if(ndx){
+    let notas='[Procedente de cribado diagnóstico — '+new Date().toLocaleDateString('es')+']';
+    if(CRIB.motivo)notas+='\nMotivo de consulta: '+CRIB.motivo;
+    if(CRIB.resultado.endo&&CRIB.resultado.endo.detalle)notas+='\nEndometriosis: '+CRIB.resultado.endo.detalle;
+    if(CRIB.resultado.mioma&&CRIB.resultado.mioma.detalle)notas+='\nMiomas: '+CRIB.resultado.mioma.detalle;
+    ndx.value=notas;
+  }
+  setTimeout(uTabBadges,0);
+  tst('Datos del cribado trasladados al formulario — revisa y completa antes de guardar ✓','ok');
+}
 
 // ═══════════════════════════════════════════════
 // PWA — SERVICE WORKER + INSTALACIÓN
