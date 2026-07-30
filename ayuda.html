@@ -221,6 +221,7 @@ kbd{
 
     <div class="snlbl">Pacientes</div>
     <a class="sna" onclick="nav('registro',this)"><span class="ico">➕</span>Registro de pacientes</a>
+    <a class="sna" onclick="nav('cribado',this)"><span class="ico">🧭</span>Cribado diagnóstico</a>
     <a class="sna" onclick="nav('formulario',this)"><span class="ico">📋</span>Formulario clínico</a>
     <a class="sna" onclick="nav('historial',this)"><span class="ico">📈</span>Historial longitudinal</a>
 
@@ -356,6 +357,40 @@ kbd{
 
       <h2>Eliminar paciente</h2>
       <p>Se puede eliminar de dos formas equivalentes: desde el modal de paciente (botón <strong>🗑 Eliminar</strong>) o directamente desde la fila de la lista de Pacientes (icono 🗑 junto a 📄/✏️), sin necesidad de abrir la ficha. Ambas piden confirmación y la acción no se puede deshacer. Se recomienda exportar un backup JSON antes de eliminar registros.</p>
+    </div>
+
+    <!-- CRIBADO DIAGNÓSTICO -->
+    <div class="section" id="s-cribado">
+      <div class="page-title">Cribado diagnóstico</div>
+      <div class="page-sub">Árbol de decisión previo al registro completo — ESHRE 2022 · SEGO 2025 · Guía Asturias 2025.</div>
+
+      <h2>¿Para qué sirve?</h2>
+      <p>Es el <strong>punto de entrada recomendado</strong> antes de crear una ficha clínica completa. Guía a la profesional a través de un árbol de decisión de 3 pasos que orienta si la paciente cumple criterios de inclusión (sospecha o confirmación de endometriosis y/o miomas). Se accede desde el menú lateral, el menú «Más» en móvil, o el botón <strong>«🧭 Cribado diagnóstico»</strong> junto a «+ Agregar paciente» en la lista de Pacientes.</p>
+
+      <h2>Paso 1 — Filiación básica</h2>
+      <p>Nombre completo (obligatorio), fecha de nacimiento y motivo de consulta en texto libre. Son los únicos datos que se conservan si la paciente <strong>no</strong> cumple criterios de inclusión.</p>
+
+      <h2>Paso 2 — Triaje sintomático</h2>
+      <p>Chips seleccionables de síntomas sugestivos de endometriosis (ESHRE 2022, Rec.1 GPP — incluye los extragenitales de la Guía Asturias 2025: hemoptisis, dolor pleural o disnea catamenial, dolor sobre cicatriz) y de miomas (SUA, compresión, dolor pélvico, anemia…). Pueden marcarse síntomas de ambas vías simultáneamente.</p>
+
+      <h2>Paso 3 — Profundización por vía clínica</h2>
+      <p>Solo se muestran las preguntas correspondientes a los síntomas marcados:</p>
+      <ul>
+        <li><strong>Vía Endometriosis:</strong> resultado de eco-TV/RM → si es negativa o no se ha realizado, se pregunta por tratamiento empírico y su respuesta. El árbol recomienda imagen + empírico como primer paso (ESHRE Rec.6), reservando la laparoscopia para el fracaso terapéutico, y marca alerta de derivación a centro de excelencia si hay nódulos profundos.</li>
+        <li><strong>Vía Miomas:</strong> confirmación ecográfica y tipo FIGO (si se conoce). Alerta de cálculo de escala STEP-W en submucosos (FIGO 0–2), y alerta de descartar sarcoma si hay crecimiento rápido postmenopáusico.</li>
+      </ul>
+
+      <h2>Resultado</h2>
+      <p>Se muestra el diagnóstico sugerido, las recomendaciones de cada vía y las alertas clínicas correspondientes (incluye siempre el recordatorio de que <strong>no se recomienda el uso de CA-125</strong> para el diagnóstico de endometriosis). Desde aquí:</p>
+      <ul>
+        <li><strong>Si cumple criterios:</strong> botón «📋 Continuar a registro completo» — traslada automáticamente nombre, síntomas, diagnóstico sugerido, FIGO y un resumen a las notas del formulario de «Nueva Paciente», donde se completa el resto de la ficha.</li>
+        <li><strong>Si no cumple criterios:</strong> botón «💾 Guardar cribado (sin inclusión)» — se guarda solo el registro ligero de filiación, sin crear una ficha de paciente.</li>
+      </ul>
+
+      <div class="box bi2"><div class="bt">📌 Criterio clínico siempre disponible</div>El árbol es una guía, no un bloqueo: en cualquier momento se puede acceder directamente a «Nueva Paciente» y registrar el caso manualmente si el juicio clínico lo justifica.</div>
+
+      <h2>Cribados guardados</h2>
+      <p>Todos los cribados (incluidos y no incluidos) quedan listados debajo del árbol, con fecha, diagnóstico sugerido y estado de inclusión. Se pueden revisar (👁) o eliminar (🗑) en cualquier momento. Se almacenan en un store independiente de IndexedDB (<code>cribados</code>) y no afectan a las estadísticas ni a los filtros de la base de pacientes.</p>
     </div>
 
     <!-- FORMULARIO -->
@@ -1318,6 +1353,7 @@ applyT();
 // ── Navegación ──
 const titles = {
   inicio:'Inicio rápido', interfaz:'Interfaz', registro:'Registro de pacientes',
+  cribado:'Cribado diagnóstico',
   formulario:'Formulario clínico', historial:'Historial longitudinal',
   algoritmos:'Algoritmos diagnósticos', tratamiento:'Tratamiento',
   fertilidad:'Fertilidad', calculadoras:'Calculadoras',
